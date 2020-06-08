@@ -5,12 +5,21 @@ import time
 
 WHITE = 255
 BLACK = 0
+# Added to make sure it doesn't explore loads of unnecessary nodes
+BANDWIDTH = 200
 
-def get_neighbours(im, current):
+def compute_heuristic(current, goal)
+    dist = [(a - b)**2 for a, b in zip(current, goal)]
+    dist = math.sqrt(sum(dist))
+    return dist
+
+def get_neighbours(im, current, boundaries):
+  upper = boundaries[0]
+  lower = boundaries[1]
   r = current[0]
   c = current[1]
 
-  if r - 1 >= 0:
+  if r - 1 >= 0 and r - 1 > upper:
     if im[r-1][c] == WHITE:
       # Up
       yield (r-1,c)
@@ -24,7 +33,7 @@ def get_neighbours(im, current):
       # Right
       yield (r, c+1)
 
-  if r + 1 < im.shape[0]:
+  if r + 1 < im.shape[0] and r + 1 < lower:
     if im[r+1][c] == WHITE:
       # Down
       yield (r+1, c)
@@ -54,11 +63,12 @@ def generate_path(path, start, goal):
   return path_list
 
 def a_star(im, start, goal):
+  boundaries = (start[0]-BANDWIDTH, start[0]+BANDWIDTH)
+
   hq = [(0, start)]
   costs = {}
   costs = defaultdict(lambda:0, costs)
   path = {}
-
   t = time.time()
 
   while hq:
@@ -70,7 +80,7 @@ def a_star(im, start, goal):
       path = generate_path(path, start, goal)
       return path
 
-    for neighbour in get_neighbours(im, current):
+    for neighbour in get_neighbours(im, current, boundaries):
       cost = current_cost + compute_cost(current, neighbour)
 
       if neighbour not in costs or cost < costs[neighbour]:
