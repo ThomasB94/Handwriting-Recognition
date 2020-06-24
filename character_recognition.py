@@ -290,6 +290,29 @@ def feature8(image):
   return lines
 
 
+def feature9(image):
+  hist = np.zeros((12,12))
+
+  for contour in contours:
+    for index, point in enumerate(contour):
+      #dereference point
+      point = point[0]
+      #take points forward and backwards 5 points along the contours
+      forward = contour[(index + 5) % len(contour)][0]
+      backwards = contour[(index - 5) % len(contour)][0]
+      angle1 = np.arctan2(forward[0] - point[0], forward[1] - point[0])
+      angle1 = np.rad2deg(angle1 % (2 * np.pi))
+      angle2 = np.arctan2(backwards[0] - point[0], backwards[1] - point[0])
+      angle2 = np.rad2deg(angle2 % (2 * np.pi))
+      if angle2 > angle1:
+        hist[np.int(np.floor(angle1/30))][np.int(np.floor(angle2/30))] = hist[np.int(np.floor(angle1/30))][np.int(np.floor(angle2/30))] + 1 
+
+  listForm = []
+  for y in range(12):
+    for x in range(y, 12):
+      listForm.append(hist[y][x])
+  return listForm
+
 """Cross feature variables"""
 
 CART_BINS = 10
