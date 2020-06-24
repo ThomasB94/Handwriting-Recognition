@@ -8,9 +8,9 @@ BLACK = 0
 # Added to make sure it doesn't explore loads of unnecessary nodes
 BANDWIDTH = 200
 
-def compute_heuristic(current, goal)
+def compute_heuristic(current, goal):
     dist = [(a - b)**2 for a, b in zip(current, goal)]
-    dist = math.sqrt(sum(dist))
+    dist = sqrt(sum(dist))
     return dist
 
 def get_neighbours(im, current, boundaries):
@@ -48,9 +48,9 @@ def compute_cost(current, neighbour):
   c1 = current[1]
   c2 = neighbour[1]
   if r1 != r2 and c1 != c2:
-    return 14
+    return 1.4
   else:
-    return 10
+    return 1
 
 def generate_path(path, start, goal):
   path_list = []
@@ -84,9 +84,10 @@ def a_star(im, start, goal):
       cost = current_cost + compute_cost(current, neighbour)
 
       if neighbour not in costs or cost < costs[neighbour]:
+        f = cost + compute_heuristic(current, neighbour)
         costs[neighbour] = cost
         path[neighbour] = current
-        heapq.heappush(hq, (cost, neighbour))
+        heapq.heappush(hq, (f, neighbour))
 
   print("Couldn't find path")
   return path

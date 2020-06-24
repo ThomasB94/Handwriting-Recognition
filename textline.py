@@ -55,7 +55,7 @@ for idx in range(len(extrema_persistence)):
     #   working_im[r][c] = BLACK
 
 paths = []
-for idx in range(6):
+for idx in range(3):
   m = minima[idx]
   path = a_star(working_im, (m,0), (m,width-1))
   paths.append(path)
