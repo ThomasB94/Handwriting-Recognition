@@ -55,22 +55,23 @@ labels = []
 print('reading images')
 
 for dir in os.scandir("./characters_for_style_classification"):
-    counter = 10
-    for root2, dirs2, files in os.walk(dir.path, topdown=False):
+    counter = 600
+    for root, dirs, files in os.walk(dir.path, topdown=False):
         for name in files:
             # append the labels
             labels.append(dir.name)
                 # Load image
-            image = cv2.imread(os.path.join(root2, name), cv2.IMREAD_GRAYSCALE)
+            image = cv2.imread(os.path.join(root, name), cv2.IMREAD_GRAYSCALE)
             _, image = cv2.threshold(image,127,255,cv2.THRESH_BINARY)
             images.append(featureVect(image, features))
             counter = counter - 1
     while counter > 0:
         #get random image from directory
-        random_file=random.choice(os.listdir(os.path.join(root, dir)))
-        labels.append(dir)
+        fileList = [os.path.join(root,f) for root,dirs,files in os.walk(dir.path) for f in files]
+        random_file=random.choice(fileList)
+        labels.append(dir.name)
         #load image
-        image = cv2.imread(os.path.join(root, dir, random_file), cv2.IMREAD_GRAYSCALE)
+        image = cv2.imread(random_file, cv2.IMREAD_GRAYSCALE)
         _, image = cv2.threshold(image,127,255,cv2.THRESH_BINARY)
         #augment the image
         image = augment(image)
@@ -94,7 +95,7 @@ for root, dirs, files in os.walk(".", topdown=False):
 print('normalizing')
 normalize_images2(images, features)
 print('saving images')
-np.save('style_feature_vecs.npy', images)
-np.save('style_labels.npy', labels)
+np.save('style_augmented_feature_vecs.npy', images)
+np.save('style_augmented_labels.npy', labels)
 print('extracted features')
 #np.save('labels.npy', labels)
