@@ -31,7 +31,7 @@ def featureVect(image, features):
   vector = np.concatenate(vector, axis=0)
   return vector
 
-"""# Feature 1 
+"""# Feature 1
 horizontal histogram 10 bins
 """
 
@@ -74,7 +74,7 @@ helper functions
 
 def polarConversion(image, centreX, centreY):
   inverted = cv2.bitwise_not(image)
-  radius = np.int(np.sqrt((image.shape[0] ** 2) + (image.shape[1] ** 2)) / 2) 
+  radius = np.int(np.sqrt((image.shape[0] ** 2) + (image.shape[1] ** 2)) / 2)
   polar_image_inv = cv2.linearPolar(inverted,(centreX, centreY), radius, cv2.WARP_FILL_OUTLIERS)
   return cv2.bitwise_not(polar_image_inv)
 
@@ -116,7 +116,7 @@ def feature4(image):
   (cx, cy) = CalcCenter(image)
   #polar representation around centre
   polar = polarConversion(image, cx, cy)
-  
+
   #make a histogram of the polar version
   return createHist(polar, POLAR_BINS)
 
@@ -293,6 +293,7 @@ def feature8(image):
 def feature9(image):
   hist = np.zeros((12,12))
 
+  contours, hierarchy = cv2.findContours(image, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
   for contour in contours:
     for index, point in enumerate(contour):
       #dereference point
@@ -305,7 +306,7 @@ def feature9(image):
       angle2 = np.arctan2(backwards[0] - point[0], backwards[1] - point[0])
       angle2 = np.rad2deg(angle2 % (2 * np.pi))
       if angle2 > angle1:
-        hist[np.int(np.floor(angle1/30))][np.int(np.floor(angle2/30))] = hist[np.int(np.floor(angle1/30))][np.int(np.floor(angle2/30))] + 1 
+        hist[np.int(np.floor(angle1/30))][np.int(np.floor(angle2/30))] = hist[np.int(np.floor(angle1/30))][np.int(np.floor(angle2/30))] + 1
 
   listForm = []
   for y in range(12):
