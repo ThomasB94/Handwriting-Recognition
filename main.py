@@ -4,16 +4,15 @@ from cv2 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 
-im = cv2.imread("line.jpg", 0)
+im = cv2.imread("line6.jpg", 0)
 height = im.shape[0]  #  = 267
 width = im.shape[1]   #  = 2583
 
 ## Binarize image
 (thresh, im) = cv2.threshold(im, 127, 255, cv2.THRESH_BINARY)
-
+  
 ## Check downwards from x for free path
 def checkFreePath(im, x):
-
   for y in range(height):
     if (im[y][x] == 0):
       return False
@@ -56,6 +55,7 @@ def drawPath(im, path):
 ## Crop whitespace on borders of segment
 def cutWhite(im):
   l,r = findBounds(im)
+
   return im[:, l:r]
 
 ## Find whitespace around segment
@@ -72,6 +72,7 @@ def findBounds(im):
     if(not checkFreePath(im, x2)):
       rb = x2
       break
+
   return lb, rb
 
 ## Crop segment based on path found with A*
@@ -80,7 +81,7 @@ def makeCut(orig, path):
   im1 = orig.copy()
   im2 = orig.copy()
 
-  ## Fill remaining pixels with WHITE for both segments
+  ## Fill remaining pixels with WHITE for both segments based on path coordinates
   for c in path:
     for x in range(w):
       if x > c[1]:
@@ -118,22 +119,24 @@ def pers(im):
 
   return extrema_persistence
 
-## Refine segments deemed to large using pathfinding
+## Refine oversized segments using pathfinding
 def refineSegm(segm):
   new = []
 
   for s in segm:
-    if s.shape[1] > 90:
+    if s.shape[1] > 60:
 
       path = makePath(s)
 
       # img = drawPath(s,path)
-
-      im1, im2 = makeCut(s,path)
-      im1 = cutWhite(im1)
-      im2 = cutWhite(im2)
-      new.append(im1)
-      new.append(im2)
+      # print(path[-1][1])
+      # print(path)
+      if(path != 0) :
+        im1, im2 = makeCut(s,path)
+        im1 = cutWhite(im1)
+        im2 = cutWhite(im2)
+        new.append(im1)
+        new.append(im2)
 
       # cv2.imshow("im", img)
       # cv2.waitKey(0)
@@ -155,9 +158,12 @@ segm, r = cutSegments(im,ext_pers)
 new = refineSegm(segm)
 newer = refineSegm(new)
 
+cv2.imshow("im", im)
+cv2.waitKey(0)
 for s in newer:
-    cv2.imshow("im",s)
-    cv2.waitKey(0)  
+    if(s != []):
+      cv2.imshow("im",s)
+      cv2.waitKey(0)  
 
 # ret,thresh = cv2.threshold(ding,127,255,0)
 # contours,hierarchy = cv2.findContours(thresh, 1, 2)

@@ -103,4 +103,4 @@ def a_star(im, start, goal):
         heapq.heappush(hq, (f, neighbour))
 
   print("Couldn't find path")
-  return path
+  return 0
