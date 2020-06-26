@@ -51,22 +51,32 @@ def select_features(image_features, labels, features, svm_best, rf_best):
         #     svm_best = svm_score
     return rf_best
 
-image_features = np.load('300_augmented_feature_vecs.npy')
+image_features = np.load('numpy_arrays\\300_augmented_feature_vecs.npy')
 print(len(image_features))
-labels = np.load('300_augmented_labels.npy')
+labels = np.load('numpy_arrays\\300_augmented_labels.npy')
 print(len(labels))
-best = select_features(image_features, labels, features, 0, 0)
-print(best)
+#best = select_features(image_features, labels, features, 0, 0)
+#print(best)
 
 # X_train, X_test, y_train, y_test = train_test_split(image_features, labels, test_size=0.25, random_state=42)
-# parameters = {'n_estimators':[100,150,200], 'max_depth': [None, 15, 20, 25, 50]}
-# RFClassifier = RandomForestClassifier(random_state=0, max_features=8)
-# random_grid = GridSearchCV(RFClassifier, parameters, cv = 5, verbose=2, n_jobs=-1)
-# random_grid.fit(X_train, y_train)
-# score = random_grid.score(X_test, y_test)
-# print(score)
+parameters = {
+    'n_estimators':[50, 100, 150],
+    'criterion': ['gini', 'entropy'],
+    'max_depth': [None, 10, 50, 75, 100],
+    'min_samples_split': [2,3,5,8],
+    'max_samples': [0.5, 0.9],
+    'min_samples_leaf': [1,2,3],
+    'max_leaf_nodes': [None, 2, 5, 10]
+}
+RFClassifier = RandomForestClassifier()
+random_grid = GridSearchCV(RFClassifier, parameters, cv = 5, n_jobs=2)
+random_grid.fit(image_features, labels)
+#score = random_grid.score(X_test, y_test)
+#print(score)
 
-
+print(random_grid.best_score_)
+print(random_grid.cv_results_['params'][random_grid.best_index_])
+#print(random_grid.cv_results_)
 
 #### SVC ####
 # (0, 1, 3, 4, 5)
