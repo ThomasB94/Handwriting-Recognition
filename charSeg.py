@@ -160,7 +160,6 @@ def segmChars(line):
   newSegm = -1
   while newSegm != 0:
     segm, newSegm = refineSegm(segm, h)
-    print(newSegm)
   
   return segm
 

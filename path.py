@@ -89,7 +89,7 @@ def a_star(im, start, goal):
     # print("Current node", current)
     if current == goal:
       elapsed = time.time() - t
-      print("Dijkstra took:", elapsed)
+      # print("Dijkstra took:", elapsed)
       path = generate_path(path, start, goal)
       return path
 
@@ -102,5 +102,5 @@ def a_star(im, start, goal):
         path[neighbour] = current
         heapq.heappush(hq, (f, neighbour))
 
-  print("Couldn't find path")
+  # print("Couldn't find path")
   return 0
