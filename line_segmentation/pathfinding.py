@@ -21,25 +21,25 @@ def get_neighbours(im, current, boundaries):
   c = current[1]
 
   if r - 1 >= 0 and r - 1 > upper:
-    if im[r-1][c] == WHITE:
+    if im[r-1][c] != BLACK:
       # Up
       yield (r-1,c)
     if c + 1 < im.shape[1]:
-      if im[r-1][c+1] == WHITE:
+      if im[r-1][c+1] != BLACK:
         # Diagonal up
         yield (r-1, c+1)
 
   if c + 1 < im.shape[1]:
-    if im[r][c+1] == WHITE:
+    if im[r][c+1] != BLACK:
       # Right
       yield (r, c+1)
 
   if r + 1 < im.shape[0] and r + 1 < lower:
-    if im[r+1][c] == WHITE:
+    if im[r+1][c] != BLACK:
       # Down
       yield (r+1, c)
     if c + 1 < im.shape[1]:
-      if im[r+1][c+1] == WHITE:
+      if im[r+1][c+1] != BLACK:
         # Diagonal down
         yield (r+1, c+1)
 

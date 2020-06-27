@@ -4,7 +4,7 @@ import os
 import cv2
 os.chdir("/Users/paulhofman/Documents/Studie/Handwriting Recognition/image-data")
 
-im = cv2.imread("P564-Fg003-R-C01-R01-binarized.jpg", cv2.IMREAD_GRAYSCALE)
+im = cv2.imread("P168-Fg016-R-C01-R01-binarized.jpg", cv2.IMREAD_GRAYSCALE)
 lines = textlines(im)
 counter = 1
 for line in lines:

@@ -4,7 +4,7 @@ import numpy as np
 import time
 import cv2
 import os
-from statistics import mean
+from statistics import mean, stdev
 from line_segmentation.persistence import RunPersistence
 from line_segmentation.pathfinding import a_star
 
@@ -28,14 +28,13 @@ def crop_line(image, row):
   else:
     return image[row-cut:row+cut, :], cut
 
+
 def textlines(im):
   lines = []
   # Removing the surrounding whitespace to increase pathfinding speed
-  cv2.imshow('img',im)
-  cv2.waitKey(0) 
-  cv2.destroyAllWindows() 
 
   im = remove_whitespace(im)
+
   # cv2.imshow('img',im)
   # cv2.waitKey(0) 
   # cv2.destroyAllWindows() 
@@ -50,12 +49,19 @@ def textlines(im):
     profile[h] = (im[h] == 0).sum()
 
   print("Determining minima")
-  THRESHOLD = 14
   extrema_persistence = RunPersistence(profile)
-  checker = [t[1] for t in extrema_persistence]
-  checker.remove(np.inf)
-  print(mean(checker))
-  extrema_persistence = [t[0] for t in extrema_persistence if t[1] > 2*THRESHOLD]
+  # checker = [t[1] for t in extrema_persistence]
+  # checker.remove(np.inf)
+  # mn = mean(checker)
+  # mx = max(checker)
+  # std = stdev(checker)
+  mn = mean(profile)
+  mx = max(profile)
+  std = stdev(profile)
+  print(mx, mn, std)
+  THRESHOLD = mn
+  print(THRESHOLD)
+  extrema_persistence = [t[0] for t in extrema_persistence if t[1] > THRESHOLD]
   # Odd indexes are minima, even maxima
   minima = []
   for idx in range(len(extrema_persistence)):
@@ -71,11 +77,12 @@ def textlines(im):
   # this is just for drawing the found lines 
   show_im = im.copy()
   for m in minima:
-    show_im[m,:] = BLACK
+    show_im[m-5:m+5,:] = BLACK
+  cv2.namedWindow('img', cv2.WINDOW_NORMAL)
+  cv2.resizeWindow('img', 900,900)
   cv2.imshow('img',show_im)
   cv2.waitKey(0) 
   cv2.destroyAllWindows() 
-  return []
 
   
   ##########################################################################
@@ -90,16 +97,16 @@ def textlines(im):
 
   ##########################################################################
   # this is just for drawing the found lines 
-  # path_im = im.copy()
-  # for path in paths:
-  #   for p in path:
-  #     r = p[0]
-  #     c = p[1]
-  #     path_im[r,c] = BLACK
+  path_im = im.copy()
+  for path in paths:
+    for p in path:
+      r = p[0]
+      c = p[1]
+      path_im[r-3:r+3,c] = BLACK
 
-  # cv2.imshow('img',path_im)
-  # cv2.waitKey(0) 
-  # cv2.destroyAllWindows() 
+  cv2.imshow('img',path_im)
+  cv2.waitKey(0) 
+  cv2.destroyAllWindows() 
 
   
   ##########################################################################
