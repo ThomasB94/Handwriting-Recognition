@@ -95,4 +95,35 @@ def textlines(im):
   for m in minima:
     path = a_star(working_im, (m,0), (m,width-1))
     paths.append(path)
+
+  num_paths = len(paths)
+  for idx in range(num_paths):
+    cut = im
+    path = paths[idx]
+    if idx == 0:
+      for p in path:
+        r = p[0]
+        c = p[1]
+        cut[0:r,c]
+    elif idx == num_paths - 1:
+      for p in path:
+        r = p[0]
+        c = p[1]
+        cut = [0:r,c]
+    else:
+      upper_path = path[idx-1]
+      bottom_path = path[idx]
+      for p in upper_path:
+        r = p[0]
+        c = p[0]
+        
+
+
+
+        
+      
+
+
+      
+
   return lines
