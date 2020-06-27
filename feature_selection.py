@@ -87,7 +87,7 @@ print(len(labels))
 #     pickle.dump(RFClassifier, pfile, protocol=pickle.HIGHEST_PROTOCOL)
 with open('character_recognizer.pickle', 'rb') as pfile:
     loaded_classifier = pickle.load(pfile)
-print(loaded_classifier.score(image_features, labels))
+print(loaded_classifier.predict(image_features[0].reshape(1,-1)))
 #### SVC ####
 # (0, 1, 3, 4, 5)
 # (0, 1, 3, 5, 7)

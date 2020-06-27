@@ -12,6 +12,7 @@ from sklearn.naive_bayes import GaussianNB
 from character_recognition import *
 from sklearn.model_selection import cross_val_score
 import statistics
+import pickle 
 
 features = [[feature1, 0, 99999, 0, 10],
             [feature2, 0, 99999, 10, 20],
@@ -21,7 +22,8 @@ features = [[feature1, 0, 99999, 0, 10],
             [feature6, 0, 99999, 56, 60],
             [feature7, 0, 99999, 60, 67],
             [feature8, 0, 99999, 67, 71],
-            [feature9, 0, 99999, 71, 149]
+            [feature9, 0, 99999, 71, 149],
+            ['feature10', 0, 99999, 149, 150]
             ]
 
 def select_features(image_features, labels, features, svm_best, rf_best):
@@ -40,27 +42,43 @@ def select_features(image_features, labels, features, svm_best, rf_best):
                 single_img_features = np.append(single_img_features, image[features[index][3]:features[index][4]])
             img_features.append(single_img_features)
         #X_train, X_test, y_train, y_test = train_test_split(img_features, labels, test_size=0.25)
-        svmClassifier = SVC()
-        svm_score = statistics.mean(cross_val_score(svmClassifier, img_features, labels, cv=5))
+        #svmClassifier = SVC()
+        #svm_score = statistics.mean(cross_val_score(svmClassifier, img_features, labels, cv=5))
         #svmClassifier.fit(img_features, labels)
         #svm_score = svmClassifier.score(X_test, y_test)
-        print('SVM score: ' + str(svm_score))
+        #print('SVM score: ' + str(svm_score))
         # RFClassifier = RandomForestClassifier(n_estimators=100, random_state=0)
         # RFClassifier.fit(X_train, y_train)
         # rf_score = RFClassifier.score(X_test, y_test)
         # print('Random Forest score: ' + str(rf_score))
         
-        #if rf_score > rf_best:
-        #   rf_best = rf_score
-        if svm_score > svm_best:
-            svm_best = svm_score
-    return svm_best
+        RFClassifier = RandomForestClassifier(n_estimators=100, random_state=42)
+        rf_score = statistics.mean(cross_val_score(RFClassifier, img_features, labels, cv=5))
+        print('Random Forest score: ' + str(rf_score))
+        if rf_score > rf_best:
+            rf_best = rf_score
+        # if svm_score > svm_best:
+        #     svm_best = svm_score
+    return rf_best
 
-image_features = np.load('style_augmented_feature_vecs.npy')
+image_features = np.load('incl_label_style_augmented_feature_vecs.npy')
 print(len(image_features))
-labels = np.load('style_augmented_labels.npy')
+labels = np.load('incl_label_style_augmented_labels.npy')
 print(len(labels))
-svm_best = select_features(image_features, labels, features, 0, 0)
+
+reduced_image_features = []
+for image in image_features:
+    reduced_image_features.append(image[:71])
+print(labels[0])
+print(len(reduced_image_features[0]))
+
+RFClassifier = RandomForestClassifier(n_estimators=150, criterion='gini', min_samples_split=2, max_depth=75, max_leaf_nodes=None, max_samples=0.9, min_samples_leaf=1)
+RFClassifier.fit(reduced_image_features, labels)
+with open('style_classifier.pickle', 'wb') as pfile:
+    pickle.dump(RFClassifier, pfile, protocol=pickle.HIGHEST_PROTOCOL)
+
+#best = select_features(image_features, labels, features, 0, 0)
+#print(best)
 # print('SVC best: {}'.format(svm_best))
 # print('Random Forest best: {}'.format(rf_best))
 
@@ -116,10 +134,10 @@ svm_best = select_features(image_features, labels, features, 0, 0)
 
 #### RandomForest (100 estimators) unnormalized ####
 # Best:
-# (0, 1, 2, 3, 5, 6)
-# Random Forest score: 0.8862433862433863
+# (0, 1, 2, 3, 4, 5, 6, 7)
+# Random Forest score: 0.6661340715839431
 
 # All features:
-# (0, 1, 2, 3, 4, 5, 6, 7, 8)
-# Random Forest score: 0.876984126984127
+# (0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+# Random Forest score: 0.5552712411838376
 ################
