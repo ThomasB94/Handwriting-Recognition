@@ -98,32 +98,30 @@ def textlines(im):
 
   num_paths = len(paths)
   for idx in range(num_paths):
-    cut = im
+    cropped = im
     path = paths[idx]
     if idx == 0:
+      max_r = max(path, key=lambda x : x[0])
+      cropped = cropped[0:max_r,:]
       for p in path:
         r = p[0]
         c = p[1]
-        cut[0:r,c]
+        cropped[r:max_r, c] = 0
     elif idx == num_paths - 1:
+      min_r = min(path, key=lambda x : x[0])
+      cropped = cropped[min_r:height,:]
       for p in path:
         r = p[0]
         c = p[1]
-        cut = [0:r,c]
+        cropped[min_r:r,:] = 0
     else:
-      upper_path = path[idx-1]
-      bottom_path = path[idx]
-      for p in upper_path:
-        r = p[0]
-        c = p[0]
-        
+      # upper_path = path[idx-1]
+      # bottom_path = path[idx]
+      # min_r = min(upper_path, key=lambda x: x[0])
+      # max_r = max(bottom_path, key=lambda x : x[0])
+      # for p in upper_path: 
+      #   r = p[0]
+      c = p[0]
 
-
-
-        
-      
-
-
-      
-
+    lines.append(cropped)
   return lines
