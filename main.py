@@ -5,7 +5,7 @@ def main():
         #textline uses image as input and outputs list of rectangles with lines of text
         #lines = textlines(im)
         # for line in lines:
-            #charList = char seg()
+            #charList = segmChars(line)
         #class.
         #style
     
