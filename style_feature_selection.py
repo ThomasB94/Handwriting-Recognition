@@ -41,7 +41,7 @@ def select_features(image_features, labels, features, svm_best, rf_best):
             for index in indices:
                 single_img_features = np.append(single_img_features, image[features[index][3]:features[index][4]])
             img_features.append(single_img_features)
-        #X_train, X_test, y_train, y_test = train_test_split(img_features, labels, test_size=0.25)
+        X_train, X_test, y_train, y_test = train_test_split(img_features, labels, test_size=0.2)
         #svmClassifier = SVC()
         #svm_score = statistics.mean(cross_val_score(svmClassifier, img_features, labels, cv=5))
         #svmClassifier.fit(img_features, labels)
@@ -53,7 +53,9 @@ def select_features(image_features, labels, features, svm_best, rf_best):
         # print('Random Forest score: ' + str(rf_score))
         
         RFClassifier = RandomForestClassifier(n_estimators=100, random_state=42)
-        rf_score = statistics.mean(cross_val_score(RFClassifier, img_features, labels, cv=5))
+        RFClassifier.fit(X_train, y_train)
+        #rf_score = statistics.mean(cross_val_score(RFClassifier, X_train, y_train, cv=5))
+        rf_score = RFClassifier.score(X_test, y_test)
         print('Random Forest score: ' + str(rf_score))
         if rf_score > rf_best:
             rf_best = rf_score
@@ -61,24 +63,26 @@ def select_features(image_features, labels, features, svm_best, rf_best):
         #     svm_best = svm_score
     return rf_best
 
-image_features = np.load('incl_label_style_augmented_feature_vecs.npy')
+image_features = np.load('numpy_arrays\\incl_label_style_augmented_feature_vecs.npy')
 print(len(image_features))
-labels = np.load('incl_label_style_augmented_labels.npy')
+labels = np.load('numpy_arrays\\incl_label_style_augmented_labels.npy')
 print(len(labels))
 
-reduced_image_features = []
-for image in image_features:
-    reduced_image_features.append(image[:71])
-print(labels[0])
-print(len(reduced_image_features[0]))
+best = select_features(image_features, labels, features, 0, 0)
+print(best)
 
-RFClassifier = RandomForestClassifier(n_estimators=150, criterion='gini', min_samples_split=2, max_depth=75, max_leaf_nodes=None, max_samples=0.9, min_samples_leaf=1)
-RFClassifier.fit(reduced_image_features, labels)
-with open('style_classifier.pickle', 'wb') as pfile:
-    pickle.dump(RFClassifier, pfile, protocol=pickle.HIGHEST_PROTOCOL)
+# reduced_image_features = []
+# for image in image_features:
+#     reduced_image_features.append(image[:71])
+# print(labels[0])
+# print(len(reduced_image_features[0]))
 
-#best = select_features(image_features, labels, features, 0, 0)
-#print(best)
+# RFClassifier = RandomForestClassifier(n_estimators=150, criterion='gini', min_samples_split=2, max_depth=75, max_leaf_nodes=None, max_samples=0.9, min_samples_leaf=1)
+# RFClassifier.fit(reduced_image_features, labels)
+# with open('style_classifier.pickle', 'wb') as pfile:
+#     pickle.dump(RFClassifier, pfile, protocol=pickle.HIGHEST_PROTOCOL)
+
+
 # print('SVC best: {}'.format(svm_best))
 # print('Random Forest best: {}'.format(rf_best))
 
