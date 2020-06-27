@@ -68,3 +68,31 @@ for path in paths:
 cv2.imshow('img',working_im)
 cv2.waitKey(0) 
 cv2.destroyAllWindows() 
+
+
+def textlines(im):
+  lines = []
+  width = working_im.shape[1]
+  height = working_im.shape[0]
+  profile = np.zeros((height,))
+  for h in range(height):
+    profile[h] = (working_im[h] == 0).sum()
+
+  THRESHOLD = 100
+  extrema_persistence = RunPersistence(profile)
+  extrema_persistence = [t for t in extrema_persistence if t[1] > 120]
+  # Odd indexes are minima, even maxima
+  minima = []
+  for idx in range(len(extrema_persistence)):
+    if idx % 2 == 0:  
+      r = extrema_persistence[idx][0]
+      minima.append(r)
+      # for c in range(width):
+      #   working_im[r][c] = BLACK
+
+  
+  paths = []
+  for m in minima:
+    path = a_star(working_im, (m,0), (m,width-1))
+    paths.append(path)
+  return lines
