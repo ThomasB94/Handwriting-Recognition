@@ -47,7 +47,8 @@ class recognizer:
         self.styleVect[self.styles.index(style)] = self.styleVect[self.styles.index(style)] + 1
 
     def getStyle(self):
-        return self.styles[argmax(self.styleVect)]
+        return self.styles[np.argmax(self.styleVect)]
+        self.pageReset()
 
     def pageReset(self):
         self.styleVect = [0, 0, 0]
@@ -64,3 +65,4 @@ image = cv2.imread("./characters_for_style_classification/Archaic/Alef/Alef_00.j
 _, image = cv2.threshold(image,127,255,cv2.THRESH_BINARY)
 print(image.shape)
 predictor.predict(image)
+print(predictor.getStyle())
