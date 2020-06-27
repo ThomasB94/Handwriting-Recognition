@@ -1,14 +1,12 @@
 import numpy as np
-import matplotlib.pyplot as plt
-plt.rcParams['figure.dpi']= 90
+# import matplotlib.pyplot as plt
+# plt.rcParams['figure.dpi']= 90
 import time
 import cv2
 import os
-os.chdir("/Users/paulhofman/Documents/Studie/Handwriting Recognition/image-data")
-from persistence import RunPersistence
-from pathfinding import a_star
+from line_segmentation.persistence import RunPersistence
+from line_segmentation.pathfinding import a_star
 
-FILE_ID = 'P168-Fg016-R-C01-R01-binarized.jpg'
 WHITE = 255
 BLACK = 0
 
@@ -29,55 +27,28 @@ def crop_line(image, row):
   else:
     return image[row-cut:row+cut, :], cut
 
-im = cv2.imread(FILE_ID)
-# To 2d format, because images are already binarized
-working_im = im[:,:,1]
-working_im = remove_whitespace(working_im)
-width = working_im.shape[1]
-height = working_im.shape[0]
-profile = np.zeros((height,))
-for h in range(height):
-  profile[h] = (working_im[h] == 0).sum()
-# x indices height
-# y num. of black pixels
-# plt.plot(np.linspace(0,height, height), profile)
-# plt.show()
-THRESHOLD = 100
-extrema_persistence = RunPersistence(profile)
-extrema_persistence = [t for t in extrema_persistence if t[1] > 120]
-# Odd indexes are minima, even maxima
-minima = []
-for idx in range(len(extrema_persistence)):
-  if idx % 2 == 0:  
-    r = extrema_persistence[idx][0]
-    minima.append(r)
-    # for c in range(width):
-    #   working_im[r][c] = BLACK
-
-paths = []
-for idx in range(3):
-  m = minima[idx]
-  path = a_star(working_im, (m,0), (m,width-1))
-  paths.append(path)
-for path in paths:
-  for p in path:
-    r = p[0]
-    c = p[1]
-    working_im[r][c] = BLACK
-
-cv2.imshow('img',working_im)
-cv2.waitKey(0) 
-cv2.destroyAllWindows() 
-
-
 def textlines(im):
   lines = []
-  width = working_im.shape[1]
-  height = working_im.shape[0]
+  # Removing the surrounding whitespace to increase pathfinding speed
+  # cv2.imshow('img',im)
+  # cv2.waitKey(0) 
+  # cv2.destroyAllWindows() 
+
+  im = remove_whitespace(im)
+  # cv2.imshow('img',im)
+  # cv2.waitKey(0) 
+  # cv2.destroyAllWindows() 
+
+  width = im.shape[1]
+  height = im.shape[0]
+
+  print("Image with height:", height, "and width:", width)
+  print("Creating horizontal projection profile")
   profile = np.zeros((height,))
   for h in range(height):
-    profile[h] = (working_im[h] == 0).sum()
+    profile[h] = (im[h] == 0).sum()
 
+  print("Determining minima")
   THRESHOLD = 100
   extrema_persistence = RunPersistence(profile)
   extrema_persistence = [t for t in extrema_persistence if t[1] > 120]
@@ -89,39 +60,89 @@ def textlines(im):
       minima.append(r)
       # for c in range(width):
       #   working_im[r][c] = BLACK
+  minima.remove(0)
+  minima.sort()
+
+  ##########################################################################
+  # this is just for drawing the found lines 
+  # show_im = im.copy()
+  # for m in minima:
+  #   show_im[m,:] = BLACK
+  # cv2.imshow('img',show_im)
+  # cv2.waitKey(0) 
+  # cv2.destroyAllWindows() 
 
   
+  ##########################################################################
+
+  print("Found", len(minima), "minima with threshold =", THRESHOLD)
+  print("Minima are:", minima)
+  print("Determining path for every minimum")
   paths = []
   for m in minima:
-    path = a_star(working_im, (m,0), (m,width-1))
+    path = a_star(im, (m,0), (m,width-1))
     paths.append(path)
 
+  ##########################################################################
+  # this is just for drawing the found lines 
+  # path_im = im.copy()
+  # for path in paths:
+  #   for p in path:
+  #     r = p[0]
+  #     c = p[1]
+  #     path_im[r,c] = BLACK
+
+  # cv2.imshow('img',path_im)
+  # cv2.waitKey(0) 
+  # cv2.destroyAllWindows() 
+
+  
+  ##########################################################################
+
+
+  print("Cutting textlines out of image")
   num_paths = len(paths)
   for idx in range(num_paths):
-    cropped = im
-    path = paths[idx]
+
+    cropped = im.copy()
+    
+    # first line, so we only use one line
     if idx == 0:
-      max_r = max(path, key=lambda x : x[0])
-      cropped = cropped[0:max_r,:]
+      path = paths[idx]
+      # determines size of rect
+      max_r = max(path, key=lambda x: x[0])[0]      
       for p in path:
         r = p[0]
         c = p[1]
-        cropped[r:max_r, c] = 0
+        cropped[r:,c] = WHITE
+      cropped = cropped[0:max_r][0:]
+    
+    # this is the last line, so above the last text line
     elif idx == num_paths - 1:
-      min_r = min(path, key=lambda x : x[0])
-      cropped = cropped[min_r:height,:]
+      path = paths[idx]
+      min_r = min(path, key=lambda x: x[0])[0]
       for p in path:
         r = p[0]
         c = p[1]
-        cropped[min_r:r,:] = 0
+        cropped[0:r,c] = WHITE
+      cropped = cropped[min_r:][0:]
+    
+    # other regular lines that have to be cut by using two paths
     else:
-      # upper_path = path[idx-1]
-      # bottom_path = path[idx]
-      # min_r = min(upper_path, key=lambda x: x[0])
-      # max_r = max(bottom_path, key=lambda x : x[0])
-      # for p in upper_path: 
-      #   r = p[0]
-      c = p[0]
+      upper_path = paths[idx-1]
+      bottom_path = paths[idx]
+      min_r = min(upper_path, key=lambda x: x[0])[0]
+      max_r = max(bottom_path, key=lambda x: x[0])[0]
+
+      for p in upper_path:
+        r = p[0]
+        c = p[1]
+        cropped[0:r,c] = WHITE
+      for p in bottom_path:
+        r = p[0]
+        c = p[1]
+        cropped[r:,c] = WHITE
+      cropped = cropped[min_r:max_r][0:]
 
     lines.append(cropped)
   return lines

@@ -7,8 +7,7 @@ WHITE = 255
 BLACK = 0
 # Added to make sure it doesn't explore loads of unnecessary nodes
 BANDWIDTH = 200
-# Eventueel terug naar achtere gaan
-# 
+
 
 def compute_heuristic(current, goal):
     dist = [(a - b)**2 for a, b in zip(current, goal)]
@@ -78,7 +77,7 @@ def a_star(im, start, goal):
     # print("Current node", current)
     if current == goal:
       elapsed = time.time() - t
-      print("Dijkstra took:", elapsed)
+      print("Path found using A*, it took:", elapsed, "seconds")
       path = generate_path(path, start, goal)
       return path
 
