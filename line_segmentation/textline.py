@@ -4,6 +4,7 @@ import numpy as np
 import time
 import cv2
 import os
+from statistics import mean
 from line_segmentation.persistence import RunPersistence
 from line_segmentation.pathfinding import a_star
 
@@ -30,9 +31,9 @@ def crop_line(image, row):
 def textlines(im):
   lines = []
   # Removing the surrounding whitespace to increase pathfinding speed
-  # cv2.imshow('img',im)
-  # cv2.waitKey(0) 
-  # cv2.destroyAllWindows() 
+  cv2.imshow('img',im)
+  cv2.waitKey(0) 
+  cv2.destroyAllWindows() 
 
   im = remove_whitespace(im)
   # cv2.imshow('img',im)
@@ -49,14 +50,17 @@ def textlines(im):
     profile[h] = (im[h] == 0).sum()
 
   print("Determining minima")
-  THRESHOLD = 100
+  THRESHOLD = 14
   extrema_persistence = RunPersistence(profile)
-  extrema_persistence = [t for t in extrema_persistence if t[1] > 120]
+  checker = [t[1] for t in extrema_persistence]
+  checker.remove(np.inf)
+  print(mean(checker))
+  extrema_persistence = [t[0] for t in extrema_persistence if t[1] > 2*THRESHOLD]
   # Odd indexes are minima, even maxima
   minima = []
   for idx in range(len(extrema_persistence)):
     if idx % 2 == 0:  
-      r = extrema_persistence[idx][0]
+      r = extrema_persistence[idx]
       minima.append(r)
       # for c in range(width):
       #   working_im[r][c] = BLACK
@@ -65,12 +69,13 @@ def textlines(im):
 
   ##########################################################################
   # this is just for drawing the found lines 
-  # show_im = im.copy()
-  # for m in minima:
-  #   show_im[m,:] = BLACK
-  # cv2.imshow('img',show_im)
-  # cv2.waitKey(0) 
-  # cv2.destroyAllWindows() 
+  show_im = im.copy()
+  for m in minima:
+    show_im[m,:] = BLACK
+  cv2.imshow('img',show_im)
+  cv2.waitKey(0) 
+  cv2.destroyAllWindows() 
+  return []
 
   
   ##########################################################################

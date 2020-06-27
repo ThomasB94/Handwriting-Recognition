@@ -44,14 +44,18 @@ def get_neighbours(im, current, boundaries):
         yield (r+1, c+1)
 
 def compute_cost(current, neighbour):
+  # cost to go to a neighbouring pixel
   r1 = current[0]
   r2 = neighbour[0]
   c1 = current[1]
   c2 = neighbour[1]
   if r1 != r2 and c1 != c2:
-    return 1.4
+    return 14
   else:
-    return 1
+    return 10
+
+def compute_d(im, current):
+  pass
 
 def generate_path(path, start, goal):
   path_list = []
