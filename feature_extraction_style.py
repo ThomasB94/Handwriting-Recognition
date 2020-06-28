@@ -51,8 +51,7 @@ features = [[feature1, 0, 99999, 0, 10],
             [feature5, 0, 99999, 36, 56],
             [feature6, 0, 99999, 56, 60],
             [feature7, 0, 99999, 60, 67],
-            [feature8, 0, 99999, 67, 71],
-            [feature9, 0, 99999, 71, 149]
+            [feature8, 0, 99999, 67, 71]
             ]
 
 images = []
@@ -65,7 +64,7 @@ else:
     style_dir = './characters_for_style_classification'
 
 for dir in os.scandir(style_dir):
-    counter = 600
+    counter = 300
     for root, dirs, files in os.walk(dir.path, topdown=False):
         for name in files:
             if name.endswith('.jpg'):
@@ -77,11 +76,7 @@ for dir in os.scandir(style_dir):
                 image = cv2.imread(os.path.join(root, name), cv2.IMREAD_GRAYSCALE)
                 _, image = cv2.threshold(image,127,255,cv2.THRESH_BINARY)
 
-                feature_vect = featureVect(image, features)
-                char_label = str(name.split('_')[0])
-                final_feature_vect = np.append(feature_vect, alphabet_lookup[char_label])
-
-                images.append(final_feature_vect)
+                images.append(featureVect(image, features))
                 counter = counter - 1
     while counter > 0:
         #get random image from directory
@@ -96,20 +91,14 @@ for dir in os.scandir(style_dir):
         #augment the image
         image = augment(image)
         #extract features
-        feature_vect = featureVect(image, features)
-        char_label = str(random_file.split('\\')[-2])
-        final_feature_vect = np.append(feature_vect, alphabet_lookup[char_label])
-        #images.append(featureVect(image, features).append(alphabet_lookup[char_label]))
-        images.append(final_feature_vect)
+        images.append(featureVect(image, features))
         counter = counter - 1
-            #print(dir)
+        #print(dir)
 
-print('normalizing')
-#print(images[833])
-#normalize_images2(images, features)
-print(images[833])
+print(len(images))
+print(len(labels))
 print('saving images')
-np.save('incl_label_style_augmented_feature_vecs.npy', images)
-np.save('incl_label_style_augmented_labels.npy', labels)
+np.save('style_augmented_feature_vecs_scaled.npy', images)
+np.save('style_augmented_labels_scaled.npy', labels)
 print('extracted features')
 #np.save('labels.npy', labels)

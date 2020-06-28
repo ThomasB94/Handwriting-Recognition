@@ -21,9 +21,7 @@ features = [[feature1, 0, 99999, 0, 10],
             [feature5, 0, 99999, 36, 56],
             [feature6, 0, 99999, 56, 60],
             [feature7, 0, 99999, 60, 67],
-            [feature8, 0, 99999, 67, 71],
-            [feature9, 0, 99999, 71, 149],
-            ['feature10', 0, 99999, 149, 150]
+            [feature8, 0, 99999, 67, 71]
             ]
 
 def select_features(image_features, labels, features, svm_best, rf_best):
@@ -63,13 +61,13 @@ def select_features(image_features, labels, features, svm_best, rf_best):
         #     svm_best = svm_score
     return rf_best
 
-image_features = np.load('numpy_arrays\\incl_label_style_augmented_feature_vecs.npy')
+image_features = np.load('numpy_arrays\\style_augmented_feature_vecs_scaled.npy')
 print(len(image_features))
-labels = np.load('numpy_arrays\\incl_label_style_augmented_labels.npy')
+labels = np.load('numpy_arrays\\style_augmented_labels_scaled.npy')
 print(len(labels))
 
-best = select_features(image_features, labels, features, 0, 0)
-print(best)
+#best = select_features(image_features, labels, features, 0, 0)
+#print(best)
 
 # reduced_image_features = []
 # for image in image_features:
@@ -77,10 +75,10 @@ print(best)
 # print(labels[0])
 # print(len(reduced_image_features[0]))
 
-# RFClassifier = RandomForestClassifier(n_estimators=150, criterion='gini', min_samples_split=2, max_depth=75, max_leaf_nodes=None, max_samples=0.9, min_samples_leaf=1)
-# RFClassifier.fit(reduced_image_features, labels)
-# with open('style_classifier.pickle', 'wb') as pfile:
-#     pickle.dump(RFClassifier, pfile, protocol=pickle.HIGHEST_PROTOCOL)
+RFClassifier = RandomForestClassifier(n_estimators=150, criterion='gini', min_samples_split=2, max_depth=75, max_leaf_nodes=None, max_samples=0.9, min_samples_leaf=1)
+RFClassifier.fit(image_features, labels)
+with open('style_classifier_scaled.pickle', 'wb') as pfile:
+    pickle.dump(RFClassifier, pfile, protocol=pickle.HIGHEST_PROTOCOL)
 
 
 # print('SVC best: {}'.format(svm_best))
