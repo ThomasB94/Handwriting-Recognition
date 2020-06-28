@@ -4,6 +4,10 @@ from matplotlib import pyplot as plt
 from char_segmentation.extrPers import RunPersistence
 from char_segmentation.path import a_star
 
+## Filter for warning (we did not have time to look into this)
+import warnings
+warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning)
+
 ## Check downwards from x for free path
 def checkFreeYPath(im, x, height):
   for y in range(height):
@@ -149,7 +153,7 @@ def refineSegm(segm, h):
           new.append(s)
 
       ## segm too wide but path not found -> bigram
-      elif(width > 85):
+      elif(width > 90):
         start = int((width/2)-20)
         end = int((width/2)+20)
         extr = bigramPers(s[:,start:end], end-start, h)
@@ -158,14 +162,24 @@ def refineSegm(segm, h):
           new.append(s)
         elif len(extr) == 1:
           extr = extr[0]
-          new.append(s[:,extr+start:])
-          new.append(s[:,:extr+start])
+          im1 = s[:,extr+start:]
+          im2 = s[:,:extr+start]
+          im1 = cutWhite(im1, h)
+          im2 = cutWhite(im2, h)
+
+          new.append(im1)
+          new.append(im2)
           newSegm +=1
         elif len(extr) > 1:
           ## Take extrema closest to middle of segment
           extr = int(min(extr, key=lambda x:abs(x-width)))
-          new.append(s[:,extr+start:])
-          new.append(s[:,:extr+start])
+          im1 = s[:,extr+start:]
+          im2 = s[:,:extr+start]
+          im1 = cutWhite(im1, h)
+          im2 = cutWhite(im2, h)
+
+          new.append(im1)
+          new.append(im2)
           newSegm+=1
       else:
         new.append(s)
@@ -235,6 +249,7 @@ def segmChars(line):
   ## Remove whitespace and add padding
   temp = []
   for s in segm:
+    sTemp = cutWhite(s,h)
     sTemp = cropY(s)
     sTemp = addBorders(sTemp)
     temp.append(sTemp)

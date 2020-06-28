@@ -51,11 +51,7 @@ def main():
     # get all the files in the directory, this should be the directory with the test images
     files = os.listdir(path)
     # filter out everything that's not a JPEG image
-    #################################################
-    #TODO: MAKE SURE THIS ACTUALLY TAKES CORRECT EXT.
-    #TODO: ALSO MAKE SURE THERE ARE NO SPACES IN THE PATH OR USE \
-    ##################################################
-    files = [f for f in files if f.lower().endswith('.pbm')]
+    files = [f for f in files if f.lower().endswith('.jpg')]
     print("Found the following files:", files)
     results_path = os.path.join(path, "results")
     if not os.path.exists(results_path):
@@ -72,7 +68,6 @@ def main():
             print("Character segmentation")
             print("------------------------")
             for line in lines:
-                # print(line)
                 try:
                     charList = segmChars(line)
                     recog_line = []
