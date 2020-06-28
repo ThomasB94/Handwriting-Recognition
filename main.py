@@ -75,8 +75,6 @@ def main():
             charList = segmChars(line)
             recog_line = []
             for ch in charList:
-                print("Character classification")
-                print("------------------------")
                 pred = recognizer.predict(ch)
                 recog_line.append(pred)
 
@@ -85,7 +83,9 @@ def main():
                 letter = hebrew_letters[alphabet_code[c]-1]
                 hebrew_line.append(letter)
             sentences.append(hebrew_line)
-            print('done with 1 line')
+
+        print("Character classification")
+        print("------------------------")
 
         print("Style classification")
         print("------------------------")
@@ -104,7 +104,7 @@ def main():
 
         f.close()
 
-        print('done with all lines')
+        print('Finished, results can be found in the results folder')
         
 
 if __name__ == "__main__":
