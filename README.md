@@ -19,7 +19,7 @@ To run the program:
 ```bash
 python3 main.py path/to/images
 ```
-**Performance on Windows is not recommended**
+**Execution on Windows is not recommended**
 
 ## Authors
 **Daan Lambert, Ivar Mak, Paul Hofman, Thomas Bakker**
