@@ -89,10 +89,10 @@ for root, dirs, files in os.walk(".", topdown=False):
             images.append(featureVect(image, features))
 '''
 
-print('normalizing')
-normalize_images2(images, features)
+#print('normalizing')
+#normalize_images2(images, features)
 print('saving images')
-np.save('300_augmented_normalized_feature_vecs.npy', images)
-np.save('300_augmented_normalized_labels.npy', labels)
+np.save('300_augmented_feature_vecs_scaled.npy', images)
+np.save('300_augmented_labels_scaled.npy', labels)
 print('extracted features')
 #np.save('labels.npy', labels)
