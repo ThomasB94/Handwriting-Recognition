@@ -55,7 +55,7 @@ def main():
     #TODO: MAKE SURE THIS ACTUALLY TAKES CORRECT EXT.
     #TODO: ALSO MAKE SURE THERE ARE NO SPACES IN THE PATH OR USE \
     ##################################################
-    files = [f for f in files if f.lower().endswith('.pbm')]
+    files = [f for f in files if f.lower().endswith('.jpg')]
     print("Found the following files:", files)
     for file_name in files:
         print(os.path.join(path,file_name))

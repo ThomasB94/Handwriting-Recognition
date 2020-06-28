@@ -279,12 +279,8 @@ def feature8(image):
   inverted = cv2.bitwise_not(image)
   #calculate houghline segments
   lines = cv2.HoughLinesP(inverted, 1, np.pi/180, 10)
-  print('feature8 lines array: ')
-  print(lines)
   #if no lines were detected, return zeroes array.
-  #if lines.all() == []:
   if lines is None:
-  #if not lines[0][0]:
     return [0, 0, 0, 0]
   
   #maximum number of lines is 1
