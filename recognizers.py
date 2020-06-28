@@ -55,13 +55,14 @@ class Recognizer:
 
     def predict(self, image):
         image_features = self._create_feature_vect(image).reshape(1, -1)
+        self._probability_check(image_features)
         char = self._predict_character(image_features)[0]
         style = self._predict_style(image_features)[0]
         self._record_style(style)
         return char
 
 predictor = Recognizer()
-image = cv2.imread("./characters_for_style_classification/Hasmonean/Bet/Bet_00.jpg", cv2.IMREAD_GRAYSCALE)
+image = cv2.imread("./characters_for_style_classification/Herodian/He/He_09.jpg", cv2.IMREAD_GRAYSCALE)
 _, image = cv2.threshold(image,127,255,cv2.THRESH_BINARY)
 print(image.shape)
 print(predictor.predict(image))
