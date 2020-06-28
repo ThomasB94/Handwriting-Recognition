@@ -252,6 +252,9 @@ def feature7(image):
   central_moments = cv2.moments(image)
   hu_moments = cv2.HuMoments(central_moments)
   for i in range(0,7):
+    # cannot take log of zero, zo make it a very small number
+    if hu_moments[i] == 0:
+      hu_moments[i] = 0.000000001
     hu_moments[i] = -1* math.copysign(1.0, hu_moments[i]) * math.log10(abs(hu_moments[i]))
   hu_moments = np.reshape(hu_moments, (-1))
   return hu_moments
@@ -282,7 +285,7 @@ def feature8(image):
   #if no lines were detected, return zeroes array.
   if lines is None:
     return [0, 0, 0, 0]
-  
+
   #maximum number of lines is 1
   numLines = 1
   lines = lines[:numLines]

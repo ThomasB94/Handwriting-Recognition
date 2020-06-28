@@ -8,7 +8,7 @@ from .character_recognition import *
 
 class Recognizer:
     def __init__(self):
-        with open('recognition/character_recognizer_no_augmentation.pickle', 'rb') as pfile:
+        with open('recognition/character_recognizer.pickle', 'rb') as pfile:
            self.char_model = pickle.load(pfile)
         with open('recognition/style_classifier.pickle', 'rb') as pfile:
            self.style_model = pickle.load(pfile)
@@ -44,7 +44,7 @@ class Recognizer:
         self.style_vect[self.styles.index(style)] = self.style_vect[self.styles.index(style)] + 1
 
     def get_style(self):
-        prediction = self.styles[np.argmax(self.style_vect)] 
+        prediction = self.styles[np.argmax(self.style_vect)]
         self._page_reset()
         return prediction
 

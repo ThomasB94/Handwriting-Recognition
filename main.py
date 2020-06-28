@@ -48,14 +48,14 @@ hebrew_letters = [chr(letter) for letter in range(0x5d0, 0x5eb)]
 def main():
     path = str(sys.argv[1])
     print("Using the images found in the folder with path:", path)
-    # get all the files in the directory, this should be the directory with the test images    
+    # get all the files in the directory, this should be the directory with the test images
     files = os.listdir(path)
     # filter out everything that's not a JPEG image
     #################################################
     #TODO: MAKE SURE THIS ACTUALLY TAKES CORRECT EXT.
     #TODO: ALSO MAKE SURE THERE ARE NO SPACES IN THE PATH OR USE \
     ##################################################
-    files = [f for f in files if f.lower().endswith('.jpg')]
+    files = [f for f in files if f.lower().endswith('.pbm')]
     print("Found the following files:", files)
     for file_name in files:
         print(os.path.join(path,file_name))
@@ -74,7 +74,7 @@ def main():
                 pred = recognizer.predict(ch)
                 recog_line.append(pred)
                 #cv2.imshow('img', ch)
-                #cv2.waitKey(0) 
+                #cv2.waitKey(0)
                 #cv2.destroyAllWindows()
 
             hebrew_line = []
@@ -104,5 +104,3 @@ def main():
 if __name__ == "__main__":
     recognizer = Recognizer()
     main()
-    
-
