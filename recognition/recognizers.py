@@ -4,17 +4,14 @@ import math
 import cv2
 import os
 
-from character_recognition import *
-
-
+from .character_recognition import *
 
 class Recognizer:
-
     def __init__(self):
-        with open('character_recognizer.pickle', 'rb') as pfile:
-            self.char_model = pickle.load(pfile)
-        with open('style_classifier.pickle', 'rb') as pfile:
-            self.style_model = pickle.load(pfile)
+        #with open('recognition/character_recognizer.pickle', 'rb') as pfile:
+        #    self.char_model = pickle.load(pfile)
+        #with open('recognition/style_classifier.pickle', 'rb') as pfile:
+        #    self.style_model = pickle.load(pfile)
         self.style_vect = [0, 0, 0]
         self.styles = ["Archaic", "Hasmonean", "Herodian"]
         self.feature_list = [
@@ -60,9 +57,9 @@ class Recognizer:
         self._record_style(style)
         return char
 
-predictor = Recognizer()
-image = cv2.imread("./characters_for_style_classification/Hasmonean/Bet/Bet_00.jpg", cv2.IMREAD_GRAYSCALE)
-_, image = cv2.threshold(image,127,255,cv2.THRESH_BINARY)
-print(image.shape)
-print(predictor.predict(image))
-print(predictor.get_style())
+# predictor = Recognizer()
+# image = cv2.imread("./characters_for_style_classification/Hasmonean/Bet/Bet_00.jpg", cv2.IMREAD_GRAYSCALE)
+# _, image = cv2.threshold(image,127,255,cv2.THRESH_BINARY)
+# print(image.shape)
+# print(predictor.predict(image))
+# print(predictor.get_style())

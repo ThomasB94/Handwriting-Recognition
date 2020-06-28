@@ -6,6 +6,11 @@ import sys
 # our algorithms
 from line_segmentation.textline import textlines
 
+
+# Character recognition
+from recognition.recognizers import Recognizer
+from recognition import *
+# Style classification
 def main():
     path = str(sys.argv[1])
     print("Using the images found in the folder with path:", path)
@@ -18,7 +23,6 @@ def main():
     ##################################################
     files = [f for f in files if f.lower().endswith('.jpg')]
     print("Found the following files:", files)
-        
     for file_name in files:
         im = cv2.imread(file_name, cv2.IMREAD_GRAYSCALE)
         # INPUT: cv2 grayscale image
@@ -36,6 +40,8 @@ def main():
         #style
 
 if __name__ == "__main__":
+    print('main')
+    recognizer = Recognizer()
     main()
     
 

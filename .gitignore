@@ -2,3 +2,4 @@ monkbrill2/
 styles/
 characters_for_style_classification/
 __pycache__/
+.DS_Store
