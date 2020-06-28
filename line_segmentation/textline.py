@@ -1,6 +1,4 @@
 import numpy as np
-# import matplotlib.pyplot as plt
-# plt.rcParams['figure.dpi']= 90
 import time
 from cv2 import cv2
 import os
@@ -49,12 +47,6 @@ def textlines(im):
   mn = np.mean(no_zeros)
   mx = max(no_zeros)
   std = stdev(no_zeros)
-  # mn = mean(profile)
-  # mx = max(profile)
-  # std = stdev(profile)
-  print(mx, mn, std)
-  THRESHOLD = mn
-  # TESTING WITH NO ZEROS MEAN 
   THRESHOLD = np.mean(no_zeros)
   print(THRESHOLD)
   extrema_persistence = [t[0] for t in extrema_persistence if t[1] > THRESHOLD]
@@ -75,20 +67,6 @@ def textlines(im):
   if height - last_line < 20:
     minima.remove(last_line)
 
-  ##########################################################################
-  # this is just for drawing the found lines 
-  # show_im = im.copy()
-  # for m in minima:
-  #   show_im[m-5:m+5,:] = BLACK
-  # cv2.namedWindow('img', cv2.WINDOW_NORMAL)
-  # cv2.resizeWindow('img', 900,900)
-  # cv2.imshow('img',show_im)
-  # cv2.waitKey(0) 
-  # cv2.destroyAllWindows() 
-
-  
-  ##########################################################################
-
   print("Found", len(minima), "minima with threshold =", THRESHOLD)
   print("Minima are:", minima)
   print("Determining path for every minimum")
@@ -96,23 +74,6 @@ def textlines(im):
   for m in minima:
     path = a_star(im, (m,0), (m,width-1))
     paths.append(path)
-
-  ##########################################################################
-  # this is just for drawing the found lines 
-  # path_im = im.copy()
-  # for path in paths:
-  #   for p in path:
-  #     r = p[0]
-  #     c = p[1]
-  #     path_im[r-3:r+3,c] = BLACK
-
-  # cv2.imshow('img',path_im)
-  # cv2.waitKey(0) 
-  # cv2.destroyAllWindows() 
-
-  
-  ##########################################################################
-
 
   print("Cutting textlines out of image")
   num_paths = len(paths)
@@ -159,16 +120,11 @@ def textlines(im):
         cropped[r:,c] = WHITE
       cropped = cropped[min_r:max_r][0:]
 
-    print("MEAN", np.mean(cropped), "HEIGHT:", cropped.shape)
-    # cv2.imshow('img',cropped)
-    # cv2.waitKey(0) 
-    # cv2.destroyAllWindows() 
     # after cutting out a sentence, we check to see if it is actually a sentence
     # if it just a white rectangle we don't pass it to char seg
     # we also check to see if it can't possibly be a good sentence, because it is too small
     if not np.mean(cropped) > 250 and not cropped.shape[0] < 30:
       lines.append(cropped)      
-      print("ADDED")
   
   print("Created all rectangles with sentences, now exiting line segmentation")
   return lines
