@@ -48,7 +48,6 @@ def textlines(im):
   mx = max(no_zeros)
   std = stdev(no_zeros)
   THRESHOLD = np.mean(no_zeros)
-  print(THRESHOLD)
   extrema_persistence = [t[0] for t in extrema_persistence if t[1] > THRESHOLD]
   # Odd indexes are minima, even maxima, we use only minima, so remove maxima
   minima = []
