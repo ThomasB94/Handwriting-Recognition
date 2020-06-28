@@ -62,53 +62,62 @@ def main():
         os.mkdir(results_path)
 
     for file_name in files:
-        print(os.path.join(path,file_name))
-        im = cv2.imread(os.path.join(path, file_name), cv2.IMREAD_GRAYSCALE)
-        print("Line segmentation")
-        print("------------------------")
-        lines = textlines(im)
-        sentences = []
-        print("Character segmentation")
-        print("------------------------")
-        for line in lines:
-            # print(line)
-            charList = segmChars(line)
-            recog_line = []
-            for ch in charList:
-                pred = recognizer.predict(ch)
-                recog_line.append(pred)
-            
-            print(recog_line)
-            hebrew_line = []
-            for c in recog_line:
-                letter = hebrew_letters[alphabet_code[c]-1]
-                hebrew_line.append(letter)
-            sentences.append(hebrew_line)
+        try:
+            print(os.path.join(path,file_name))
+            im = cv2.imread(os.path.join(path, file_name), cv2.IMREAD_GRAYSCALE)
+            print("Line segmentation")
+            print("------------------------")
+            lines = textlines(im)
+            sentences = []
+            print("Character segmentation")
+            print("------------------------")
+            for line in lines:
+                # print(line)
+                try:
+                    charList = segmChars(line)
+                    recog_line = []
+                    for ch in charList:
+                        try:
+                            pred = recognizer.predict(ch)
+                            recog_line.append(pred)
+                        except:
+                            print("Skipping character because of error")
 
-        print("Character classification")
-        print("------------------------")
+                    hebrew_line = []
+                    for c in recog_line:
+                        letter = hebrew_letters[alphabet_code[c]-1]
+                        hebrew_line.append(letter)
+                    sentences.append(hebrew_line)
+                except:
+                    print("Sentence segmentation went wrong, skipping line")
+                    sentences.append([])
 
-        print("Style classification")
-        print("------------------------")
-        style = recognizer.get_style()
-        result_file_name = file_name.split('.')[0]
-        with open(os.path.join(results_path,result_file_name) + "_characters.txt", "w") as f:
-            for sent in sentences:
-                for c in sent:
-                    f.write(c)
-                f.write('\n')
+            print("Character classification")
+            print("------------------------")
 
-        f.close()
+            print("Style classification")
+            print("------------------------")
+            style = recognizer.get_style()
+            result_file_name = file_name.split('.')[0]
+            with open(os.path.join(results_path,result_file_name) + "_characters.txt", "w") as f:
+                for sent in sentences:
+                    for c in sent:
+                        f.write(c)
+                    f.write('\n')
 
-        with open(os.path.join(results_path,result_file_name) + "_style.txt", "w") as f:
-            f.write(style)
+            f.close()
 
-        f.close()
+            with open(os.path.join(results_path,result_file_name) + "_style.txt", "w") as f:
+                f.write(style)
 
-        print('Finished with', file_name)
-    
+            f.close()
+
+            print('Finished with', file_name)
+        except:
+            print("Something went wrong with this page, going to the next one")
+
     print("Completely done, results are in the results folder with the images")
-        
+
 
 if __name__ == "__main__":
     recognizer = Recognizer()
