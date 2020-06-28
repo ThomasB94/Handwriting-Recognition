@@ -47,6 +47,7 @@ def createHist(image, bins):
     roi = image[0:height, start:end]
     #to count the black pixels, we want the pixels that are zero
     hist[index] = ((end - start) * height) - cv2.countNonZero(roi)
+  hist = [value / image.shape[1]*height for value in hist]
   return hist
 
 def feature1(image):
@@ -144,6 +145,7 @@ def feature5(image):
     while pos > 0 and image[np.int(np.floor(location)), pos] == 255:
       pos = pos - 1
     values[index] = polar.shape[1] - pos
+  values = [lines / polar.shape[1] for lines in values]
   return values
 
 """# Feature 6
@@ -279,13 +281,17 @@ def feature8(image):
   inverted = cv2.bitwise_not(image)
   #calculate houghline segments
   lines = cv2.HoughLinesP(inverted, 1, np.pi/180, 10)
-  #if no lines were detected, return zeroes array.
+  #maximum number of lines is 3
   if lines is None:
     return [0, 0, 0, 0]
-  #maximum number of lines is 1
+  #if no lines were detected, return zeroes array.
   lines = lines[:1]
   #reshape array into 2d array
   lines = np.reshape(lines, (-1))
+  lines[0] = lines[0] / image.shape[1]
+  lines[1] = lines[1] / image.shape[0]
+  lines[2] = lines[2] / image.shape[1]
+  lines[3] = lines[3] / image.shape[0]
   return lines
 
 
