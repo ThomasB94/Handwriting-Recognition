@@ -23,7 +23,7 @@ def main():
     #TODO: MAKE SURE THIS ACTUALLY TAKES CORRECT EXT.
     #TODO: ALSO MAKE SURE THERE ARE NO SPACES IN THE PATH OR USE \
     ##################################################
-    files = [f for f in files if f.lower().endswith('.jpg')]
+    files = [f for f in files if f.lower().endswith('.pbm')]
     print("Found the following files:", files)
     for file_name in files:
         print(os.path.join(path,file_name))
@@ -34,22 +34,18 @@ def main():
         lines = textlines(im)
 
         for line in lines:
+            print(line)
             charList = segmChars(line)
             for ch in charList:
-                cv2.imshow('image', ch)
-                cv2.waitKey(0)
-                cv2.destroyAllWindows() 
+                print(recognizer.predict(ch))
+                #cv2.imshow('img', ch)
+                #cv2.waitKey(0) 
+                #cv2.destroyAllWindows()
             print('done with 1 line')
         print('done with all lines')
-
-        #lines = textlines(im)
-        # for line in lines:
-            #charList = segmChars(line)
-        #class.
-        #style
+        print(recognizer.get_style())
 
 if __name__ == "__main__":
-    print('main')
     recognizer = Recognizer()
     main()
     

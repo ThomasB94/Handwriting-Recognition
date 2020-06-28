@@ -1,9 +1,8 @@
-from extrPers import RunPersistence
-from path import a_star
 from cv2 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
-
+from char_segmentation.extrPers import RunPersistence
+from char_segmentation.path import a_star
 ## Check downwards from x for free path
 def checkFreePath(im, x, height):
   for y in range(height):
@@ -164,16 +163,5 @@ def segmChars(line):
   newSegm = -1
   while newSegm != 0:
     segm, newSegm = refineSegm(segm, h)
-    print(newSegm)
   
   return segm
-
-def main():
-  line = cv2.imread("line.jpg", 0)
-  segm = segmChars(line)
-
-  for s in segm:
-    cv2.imshow("im", s)
-    cv2.waitKey(0)
-
-main()
