@@ -34,7 +34,7 @@ def main():
         for line in lines:
             charList = segmChars(line)
 
-
+        
         #lines = textlines(im)
         # for line in lines:
             #charList = segmChars(line)
