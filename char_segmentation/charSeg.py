@@ -242,7 +242,7 @@ def segmChars(line):
   maxSegmenting = 0
 
   ## Refining
-  while newSegm != 0 and maxSegmenting != 30:
+  while newSegm != 0 and maxSegmenting != 30 and len(segm) < 40:
     segm, newSegm = refineSegm(segm, h)
     maxSegmenting += 1 
   
