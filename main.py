@@ -83,7 +83,6 @@ def main():
                         except:
                             print("Skipping character because of error")
 
-                    print(recog_line)
                     hebrew_line = []
                     for c in recog_line:
                         letter = hebrew_letters[alphabet_code[c]-1]
