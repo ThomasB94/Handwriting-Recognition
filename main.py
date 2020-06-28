@@ -81,13 +81,11 @@ def main():
                 #cv2.destroyAllWindows()
 
             hebrew_line = []
-            recog_line.reverse()
             for c in recog_line:
                 letter = hebrew_letters[alphabet_code[c]-1]
                 # letter = letter.encode("utf-8")
                 hebrew_line.append(letter)
             sentences.append(hebrew_line)
-
             print('done with 1 line')
 
         style = recognizer.get_style()
