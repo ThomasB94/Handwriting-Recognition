@@ -1,4 +1,5 @@
 from line_segmentation.textline import textlines
+from char_segmentation.charSeg import segmChars
 
 
 import os
@@ -14,3 +15,5 @@ for line in lines:
     cv2.waitKey(0) 
     cv2.destroyAllWindows() 
     counter = counter + 1
+    segm = segmChars(line)
+    print(segm)

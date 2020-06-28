@@ -75,14 +75,14 @@ def textlines(im):
 
   ##########################################################################
   # this is just for drawing the found lines 
-  show_im = im.copy()
-  for m in minima:
-    show_im[m-5:m+5,:] = BLACK
-  cv2.namedWindow('img', cv2.WINDOW_NORMAL)
-  cv2.resizeWindow('img', 900,900)
-  cv2.imshow('img',show_im)
-  cv2.waitKey(0) 
-  cv2.destroyAllWindows() 
+  # show_im = im.copy()
+  # for m in minima:
+  #   show_im[m-5:m+5,:] = BLACK
+  # cv2.namedWindow('img', cv2.WINDOW_NORMAL)
+  # cv2.resizeWindow('img', 900,900)
+  # cv2.imshow('img',show_im)
+  # cv2.waitKey(0) 
+  # cv2.destroyAllWindows() 
 
   
   ##########################################################################
@@ -97,16 +97,16 @@ def textlines(im):
 
   ##########################################################################
   # this is just for drawing the found lines 
-  path_im = im.copy()
-  for path in paths:
-    for p in path:
-      r = p[0]
-      c = p[1]
-      path_im[r-3:r+3,c] = BLACK
+  # path_im = im.copy()
+  # for path in paths:
+  #   for p in path:
+  #     r = p[0]
+  #     c = p[1]
+  #     path_im[r-3:r+3,c] = BLACK
 
-  cv2.imshow('img',path_im)
-  cv2.waitKey(0) 
-  cv2.destroyAllWindows() 
+  # cv2.imshow('img',path_im)
+  # cv2.waitKey(0) 
+  # cv2.destroyAllWindows() 
 
   
   ##########################################################################

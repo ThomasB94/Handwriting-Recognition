@@ -3,9 +3,11 @@ import os
 import cv2
 import sys
 
-# our algorithms
+# Line segmentation
 from line_segmentation.textline import textlines
 
+# Character segmentation
+from char_segmentation.charSeg import segmChars
 
 # Character recognition
 from recognition.recognizers import Recognizer
