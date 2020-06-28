@@ -176,6 +176,11 @@ def cropY(segm):
     
   return segm[upB:lowB, :]
 
+def addBorders(s):
+  size = 5
+  new = cv2.copyMakeBorder(s.copy(),size,size,size,size,cv2.BORDER_CONSTANT,value=255)
+  return new
+
 def segmChars(line):
   h = line.shape[0]
   w = line.shape[1]
@@ -190,12 +195,17 @@ def segmChars(line):
   segm = cleanSegm(segm)
 
   newSegm = -1
-  while newSegm != 0:
+  maxSegmenting = 0
+
+  while newSegm != 0 and maxSegmenting != 30:
     segm, newSegm = refineSegm(segm, h)
+    maxSegmenting += 1 
   
   temp = []
   for s in segm:
-    temp.append(cropY(s))
+    sTemp = cropY(s)
+    sTemp = addBorders(sTemp)
+    temp.append(sTemp)
 
   segm = temp
 
