@@ -1,6 +1,6 @@
 # regular imports
 import os
-import cv2
+from cv2 import cv2
 import sys
 
 # Line segmentation
@@ -26,14 +26,21 @@ def main():
     files = [f for f in files if f.lower().endswith('.jpg')]
     print("Found the following files:", files)
     for file_name in files:
-        im = cv2.imread(file_name, cv2.IMREAD_GRAYSCALE)
+        print(os.path.join(path,file_name))
+        im = cv2.imread(os.path.join(path, file_name), cv2.IMREAD_GRAYSCALE)
+        print(im)
         # INPUT: cv2 grayscale image
         # OUTPUT: list of rectangular cv2 grayscale images that represent sentences
         lines = textlines(im)
 
         for line in lines:
             charList = segmChars(line)
-
+            for ch in charList:
+                cv2.imshow('image', ch)
+                cv2.waitKey(0)
+                cv2.destroyAllWindows() 
+            print('done with 1 line')
+        print('done with all lines')
 
         #lines = textlines(im)
         # for line in lines:

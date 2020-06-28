@@ -157,4 +157,5 @@ def textlines(im):
       cropped = cropped[min_r:max_r][0:]
 
     lines.append(cropped)
+  print('giving lines to character segmentation')
   return lines
