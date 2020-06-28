@@ -64,11 +64,12 @@ def main():
     for file_name in files:
         print(os.path.join(path,file_name))
         im = cv2.imread(os.path.join(path, file_name), cv2.IMREAD_GRAYSCALE)
-        # print(im)
-        # INPUT: cv2 grayscale image
-        # OUTPUT: list of rectangular cv2 grayscale images that represent sentences
+        print("Line segmentation")
+        print("------------------------")
         lines = textlines(im)
         sentences = []
+        print("Character segmentation")
+        print("------------------------")
         for line in lines:
             # print(line)
             charList = segmChars(line)
@@ -76,18 +77,19 @@ def main():
             for ch in charList:
                 pred = recognizer.predict(ch)
                 recog_line.append(pred)
-                #cv2.imshow('img', ch)
-                #cv2.waitKey(0)
-                #cv2.destroyAllWindows()
-
+            
+            print(recog_line)
             hebrew_line = []
             for c in recog_line:
                 letter = hebrew_letters[alphabet_code[c]-1]
-                # letter = letter.encode("utf-8")
                 hebrew_line.append(letter)
             sentences.append(hebrew_line)
-            print('done with 1 line')
 
+        print("Character classification")
+        print("------------------------")
+
+        print("Style classification")
+        print("------------------------")
         style = recognizer.get_style()
         result_file_name = file_name.split('.')[0]
         with open(os.path.join(results_path,result_file_name) + "_characters.txt", "w") as f:
@@ -103,7 +105,9 @@ def main():
 
         f.close()
 
-        print('done with all lines')
+        print('Finished with', file_name)
+    
+    print("Completely done, results are in the results folder with the images")
         
 
 if __name__ == "__main__":
