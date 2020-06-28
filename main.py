@@ -57,6 +57,10 @@ def main():
     ##################################################
     files = [f for f in files if f.lower().endswith('.pbm')]
     print("Found the following files:", files)
+    results_path = os.path.join(path, "results")
+    if not os.path.exists(results_path):
+        os.mkdir(results_path)
+
     for file_name in files:
         print(os.path.join(path,file_name))
         im = cv2.imread(os.path.join(path, file_name), cv2.IMREAD_GRAYSCALE)
@@ -64,7 +68,6 @@ def main():
         # INPUT: cv2 grayscale image
         # OUTPUT: list of rectangular cv2 grayscale images that represent sentences
         lines = textlines(im)
-
         sentences = []
         for line in lines:
             # print(line)
@@ -89,17 +92,21 @@ def main():
 
         style = recognizer.get_style()
         result_file_name = file_name.split('.')[0]
-        with open(os.path.join(path,result_file_name) + "_recog.txt", "w") as f:
+        with open(os.path.join(results_path,result_file_name) + "_characters.txt", "w") as f:
             for sent in sentences:
                 for c in sent:
                     f.write(c)
                 f.write('\n')
 
-        with open(os.path.join(path,result_file_name) + "_style.txt", "w") as f:
+        f.close()
+
+        with open(os.path.join(results_path,result_file_name) + "_style.txt", "w") as f:
             f.write(style)
 
+        f.close()
+
         print('done with all lines')
-        break
+        
 
 if __name__ == "__main__":
     recognizer = Recognizer()
