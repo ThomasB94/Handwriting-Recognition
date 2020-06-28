@@ -42,7 +42,7 @@ def textlines(im):
   no_zeros = profile[profile != 0]
   # the mean turns out to be a good threshold for persistence
   mn = np.mean(no_zeros)
-  THRESHOLD = np.mean(no_zeros)
+  THRESHOLD = mn
   extrema_persistence = [t[0] for t in extrema_persistence if t[1] > THRESHOLD]
   # odd indexes are minima, even maxima, we use only minima, so remove maxima
   minima = []
