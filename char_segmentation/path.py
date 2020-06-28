@@ -42,19 +42,6 @@ def get_neighbours(im, current, boundaries):
             # Left
             yield (r, c-1)
 
-    # if r - 1 > 0:
-    #     if im[r-1][c] != BLACK:
-    #         # up
-    #         yield (r-1,c)
-    #     if c + 1 < im.shape[1]:
-    #         if im[r-1][c+1] != BLACK:
-    #             # Diagonal right up
-    #             yield (r-1, c+1)
-    #     if c-1 >= 0:
-    #         if im[r-1][c-1] != BLACK:
-    #             # Diagonal left up
-    #             yield (r-1, c-1) 
-
 def compute_cost(current, neighbour):
   r1 = current[0]
   r2 = neighbour[0]
