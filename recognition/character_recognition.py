@@ -287,15 +287,8 @@ def feature8(image):
   #maximum number of lines is 3
   if lines is None:
     return [0, 0, 0, 0]
-<<<<<<< HEAD
-
-  #maximum number of lines is 1
-  numLines = 1
-  lines = lines[:numLines]
-=======
   #if no lines were detected, return zeroes array.
   lines = lines[:1]
->>>>>>> c6471bec3ad04969971d43802f4523fed8fa0cc2
   #reshape array into 2d array
   lines = np.reshape(lines, (-1))
   lines[0] = lines[0] / image.shape[1]
