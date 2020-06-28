@@ -8,11 +8,7 @@ from .character_recognition import *
 
 class Recognizer:
     def __init__(self):
-<<<<<<< HEAD
         with open('recognition/character_recognizer.pickle', 'rb') as pfile:
-=======
-        with open('recognition/character_recognizer_scaled.pickle', 'rb') as pfile:
->>>>>>> c6471bec3ad04969971d43802f4523fed8fa0cc2
            self.char_model = pickle.load(pfile)
         with open('recognition/style_classifier.pickle', 'rb') as pfile:
            self.style_model = pickle.load(pfile)
