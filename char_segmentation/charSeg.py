@@ -1,23 +1,32 @@
-from extrPers import RunPersistence
-from path import a_star
 from cv2 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
-
+from char_segmentation.extrPers import RunPersistence
+from char_segmentation.path import a_star
 ## Check downwards from x for free path
-def checkFreePath(im, x, height):
+def checkFreeYPath(im, x, height):
   for y in range(height):
     if (im[y][x] == 0):
       return False
 
   return True
 
+## check sideways from Y for free path
+def checkFreeXPath(im, y, width):
+  for x in range(width):
+    if (im[y][x] == 0):
+      # print("not free x path found")
+      return False
+
+  return True
+
+
 ## Make initial cut, based on peristence IF path is free
 def cutSegments(im, extrema_persistence, h):
   segments = []
 
   for x in extrema_persistence:
-    if(checkFreePath(im,x,h)):
+    if(checkFreeYPath(im,x,h)):
       s1 = im[:, :x].copy()
       s2 = im[:, x:].copy()
       im = s1
@@ -42,24 +51,24 @@ def drawPath(im, path):
 
   return im
 
-## Crop whitespace on borders of segment
-def cutWhite(im, h):
-  l,r = findBounds(im, h)
 
+## Crop whitespace on x borders of segment
+def cutWhite(im, h):
+  l,r = findYBounds(im, h)
   return im[:, l:r]
 
 ## Find whitespace around segment
-def findBounds(im, h):
+def findYBounds(im, h):
   lb = 0
   rb = im.shape[1]
 
   for x in range(im.shape[1]):
-    if(not checkFreePath(im, x, h)):
+    if(not checkFreeYPath(im, x, h)):
       lb = x
       break
 
   for x2 in reversed(range(im.shape[1])):
-    if(not checkFreePath(im, x2, h)):
+    if(not checkFreeYPath(im, x2, h)):
       rb = x2
       break
 
@@ -115,7 +124,8 @@ def refineSegm(segm, h):
   newSegm = 0
 
   for s in segm:
-    if s.shape[1] > 60:
+    width = s.shape[1]
+    if width > 60:
 
       path = makePath(s)
 
@@ -148,6 +158,23 @@ def cleanSegm(segm):
 
   return temp
 
+def cropY(segm):
+  h = segm.shape[0]
+  w = segm.shape[1]
+  upB = 0
+  lowB = h
+
+  for y in range(h):
+    if not checkFreeXPath(segm,y,w):
+      upB = y
+      break
+  for y2 in reversed(range(h)):
+    if not checkFreeXPath(segm, y2, w):
+      lowB = y2
+      break
+    
+  return segm[upB:lowB, :]
+
 def segmChars(line):
   h = line.shape[0]
   w = line.shape[1]
@@ -164,16 +191,11 @@ def segmChars(line):
   newSegm = -1
   while newSegm != 0:
     segm, newSegm = refineSegm(segm, h)
-    print(newSegm)
   
-  return segm
-
-def main():
-  line = cv2.imread("line.jpg", 0)
-  segm = segmChars(line)
-
+  temp = []
   for s in segm:
-    cv2.imshow("im", s)
-    cv2.waitKey(0)
+    temp.append(cropY(s))
 
-main()
+  segm = temp
+
+  return segm
