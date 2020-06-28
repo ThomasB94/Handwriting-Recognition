@@ -45,16 +45,17 @@ def textlines(im):
 
   print("Determining minima")
   extrema_persistence = RunPersistence(profile)
-  # checker = [t[1] for t in extrema_persistence]
-  # checker.remove(np.inf)
-  # mn = mean(checker)
-  # mx = max(checker)
-  # std = stdev(checker)
-  mn = mean(profile)
-  mx = max(profile)
-  std = stdev(profile)
+  no_zeros = profile[profile != 0]
+  mn = np.mean(no_zeros)
+  mx = max(no_zeros)
+  std = stdev(no_zeros)
+  # mn = mean(profile)
+  # mx = max(profile)
+  # std = stdev(profile)
   print(mx, mn, std)
   THRESHOLD = mn
+  # TESTING WITH NO ZEROS MEAN 
+  THRESHOLD = np.mean(no_zeros)
   print(THRESHOLD)
   extrema_persistence = [t[0] for t in extrema_persistence if t[1] > THRESHOLD]
   # Odd indexes are minima, even maxima, we use only minima, so remove maxima
@@ -63,8 +64,7 @@ def textlines(im):
     if idx % 2 == 0:  
       r = extrema_persistence[idx]
       minima.append(r)
-      # for c in range(width):
-      #   working_im[r][c] = BLACK
+
   minima.sort()
   
   # check to see if there is a line at the top or at the bottom, we don't use those, so we remove them
@@ -159,11 +159,16 @@ def textlines(im):
         cropped[r:,c] = WHITE
       cropped = cropped[min_r:max_r][0:]
 
+    print("MEAN", np.mean(cropped), "HEIGHT:", cropped.shape)
+    # cv2.imshow('img',cropped)
+    # cv2.waitKey(0) 
+    # cv2.destroyAllWindows() 
     # after cutting out a sentence, we check to see if it is actually a sentence
     # if it just a white rectangle we don't pass it to char seg
-    if not np.mean(cropped) > 250:
-      # this checks to see if a line is just whitespace or has some black dots
+    # we also check to see if it can't possibly be a good sentence, because it is too small
+    if not np.mean(cropped) > 250 and not cropped.shape[0] < 30:
       lines.append(cropped)      
+      print("ADDED")
   
   print("Created all rectangles with sentences, now exiting line segmentation")
   return lines
