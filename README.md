@@ -8,7 +8,7 @@ The required installs are ```python3``` and ```pip3``` and ```git-lfs```.
 
 ## Setup
 
-Clone the repo and activate git-lfs (**after having installed through the instructions given in the link above**):
+Clone the repo and activate git-lfs (**after having it installed through the instructions given in the link above**):
 ```bash
 git clone https://github.com/ThomasB94/Handwriting-Recognition.git
 git lfs install
