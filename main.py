@@ -77,7 +77,8 @@ def main():
             for ch in charList:
                 pred = recognizer.predict(ch)
                 recog_line.append(pred)
-
+            
+            print(recog_line)
             hebrew_line = []
             for c in recog_line:
                 letter = hebrew_letters[alphabet_code[c]-1]
@@ -104,7 +105,9 @@ def main():
 
         f.close()
 
-        print('Finished, results can be found in the results folder')
+        print('Finished with', file_name)
+    
+    print("Completely done, results are in the results folder with the images")
         
 
 if __name__ == "__main__":
