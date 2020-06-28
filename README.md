@@ -16,7 +16,7 @@ The required packages are provided in the ```requirements.txt```, to install the
 pip3 install -r requirements.txt
 ```
 Download the classifiers from [drive](https://drive.google.com/drive/folders/1_r2A1dqMXkP0lREvzFmkZRiNyglhF6Ij?usp=sharing).
-> Store both classifiers (.pickle files) in the folder Handwriting-Recognition/recognition
+> **Store both classifiers (.pickle files) in the folder Handwriting-Recognition/recognition**
 ## Usage
 
 To run the program:
