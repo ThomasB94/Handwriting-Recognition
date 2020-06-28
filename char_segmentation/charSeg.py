@@ -3,6 +3,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from char_segmentation.extrPers import RunPersistence
 from char_segmentation.path import a_star
+
 ## Check downwards from x for free path
 def checkFreeYPath(im, x, height):
   for y in range(height):
@@ -124,6 +125,7 @@ def bigramPers(im, width, height):
 ## Refine oversized segments using pathfinding
 def refineSegm(segm, h):
   new = []
+  ## Keep track of newly added segments to re-address these later on
   newSegm = 0
 
   for s in segm:
@@ -132,10 +134,13 @@ def refineSegm(segm, h):
 
       path = makePath(s)
 
+      ## path returns 0 when no path has been found
       if(path != 0):
         im1, im2 = makeCut(s,path)
         im1 = cutWhite(im1, h)
         im2 = cutWhite(im2, h)
+
+        ## Make sure segments are larger then .25* width to avoid small segments
         if im1.shape[1] > 0.25*s.shape[1] and im2.shape[1] > 0.25*s.shape[1]:
           new.append(im2)
           new.append(im1)
@@ -157,6 +162,7 @@ def refineSegm(segm, h):
           new.append(s[:,:extr+start])
           newSegm +=1
         elif len(extr) > 1:
+          ## Take extrema closest to middle of segment
           extr = int(min(extr, key=lambda x:abs(x-width)))
           new.append(s[:,extr+start:])
           new.append(s[:,:extr+start])
@@ -168,6 +174,7 @@ def refineSegm(segm, h):
 
   return new, newSegm
 
+## Remove empty segments and all-white segments
 def cleanSegm(segm):
   temp = segm.copy()
   for s in segm:
@@ -178,6 +185,7 @@ def cleanSegm(segm):
 
   return temp
 
+## Remove white space above and below segment
 def cropY(segm):
   h = segm.shape[0]
   w = segm.shape[1]
@@ -195,11 +203,13 @@ def cropY(segm):
     
   return segm[upB:lowB, :]
 
+## Add padding to make segments resemble data set
 def addBorders(s):
   size = 5
   new = cv2.copyMakeBorder(s.copy(),size,size,size,size,cv2.BORDER_CONSTANT,value=255)
   return new
 
+## Main function for segmentation
 def segmChars(line):
   h = line.shape[0]
   w = line.shape[1]
@@ -209,6 +219,7 @@ def segmChars(line):
 
   ext_pers = pers(line,w)
 
+  ## Initial rough cut
   segm = cutSegments(line,ext_pers,h)
 
   segm = cleanSegm(segm)
@@ -216,10 +227,12 @@ def segmChars(line):
   newSegm = -1
   maxSegmenting = 0
 
+  ## Refining
   while newSegm != 0 and maxSegmenting != 30:
     segm, newSegm = refineSegm(segm, h)
     maxSegmenting += 1 
   
+  ## Remove whitespace and add padding
   temp = []
   for s in segm:
     sTemp = cropY(s)
