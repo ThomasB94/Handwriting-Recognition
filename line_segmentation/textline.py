@@ -13,10 +13,6 @@ BLACK = 0
 
 def remove_whitespace(image):
   rows, cols = np.where(image == 0)
-  # r1 = min(rows) - 2
-  # r2 = max(rows) + 2
-  # c1 = min(cols) - 2
-  # c2 = max(cols) + 2
   r1 = min(rows)
   r2 = max(rows)
   c1 = min(cols)
@@ -81,14 +77,14 @@ def textlines(im):
 
   ##########################################################################
   # this is just for drawing the found lines 
-  show_im = im.copy()
-  for m in minima:
-    show_im[m-5:m+5,:] = BLACK
-  cv2.namedWindow('img', cv2.WINDOW_NORMAL)
-  cv2.resizeWindow('img', 900,900)
-  cv2.imshow('img',show_im)
-  cv2.waitKey(0) 
-  cv2.destroyAllWindows() 
+  # show_im = im.copy()
+  # for m in minima:
+  #   show_im[m-5:m+5,:] = BLACK
+  # cv2.namedWindow('img', cv2.WINDOW_NORMAL)
+  # cv2.resizeWindow('img', 900,900)
+  # cv2.imshow('img',show_im)
+  # cv2.waitKey(0) 
+  # cv2.destroyAllWindows() 
 
   
   ##########################################################################
@@ -103,16 +99,16 @@ def textlines(im):
 
   ##########################################################################
   # this is just for drawing the found lines 
-  path_im = im.copy()
-  for path in paths:
-    for p in path:
-      r = p[0]
-      c = p[1]
-      path_im[r-3:r+3,c] = BLACK
+  # path_im = im.copy()
+  # for path in paths:
+  #   for p in path:
+  #     r = p[0]
+  #     c = p[1]
+  #     path_im[r-3:r+3,c] = BLACK
 
-  cv2.imshow('img',path_im)
-  cv2.waitKey(0) 
-  cv2.destroyAllWindows() 
+  # cv2.imshow('img',path_im)
+  # cv2.waitKey(0) 
+  # cv2.destroyAllWindows() 
 
   
   ##########################################################################
@@ -120,14 +116,13 @@ def textlines(im):
 
   print("Cutting textlines out of image")
   num_paths = len(paths)
-  print("THIS IS THE NUMBER OF PATHS", num_paths)
-  for idx in range(num_paths):
+  # if we have num_paths paths, we have num_paths+1 sentences
+  for idx in range(num_paths+1):
 
     cropped = im.copy()
     
     # first line, so we only use one line
     if idx == 0:
-      print("DOING FIRST LINE ")
       path = paths[idx]
       # determines size of rect
       max_r = max(path, key=lambda x: x[0])[0]      
@@ -138,9 +133,8 @@ def textlines(im):
       cropped = cropped[0:max_r][0:]
     
     # this is the last line, so above the last text line
-    elif idx == num_paths - 1:
-      print("LAST LINE")
-      path = paths[idx]
+    elif idx == num_paths:
+      path = paths[idx-1]
       min_r = min(path, key=lambda x: x[0])[0]
       for p in path:
         r = p[0]
@@ -150,7 +144,6 @@ def textlines(im):
     
     # other regular lines that have to be cut by using two paths
     else:
-      print("MIDDLE LINE")
       upper_path = paths[idx-1]
       bottom_path = paths[idx]
       min_r = min(upper_path, key=lambda x: x[0])[0]
@@ -168,13 +161,9 @@ def textlines(im):
 
     # after cutting out a sentence, we check to see if it is actually a sentence
     # if it just a white rectangle we don't pass it to char seg
-    # print("DEBUG SHIT: MEAN =", np.mean(cropped))
-    # if not np.mean(cropped) > 250:
-      
+    if not np.mean(cropped) > 250:
       # this checks to see if a line is just whitespace or has some black dots
-    cv2.imshow('img',cropped)
-    cv2.waitKey(0) 
-    cv2.destroyAllWindows() 
-    lines.append(cropped)
+      lines.append(cropped)      
+  
   print("Created all rectangles with sentences, now exiting line segmentation")
   return lines
