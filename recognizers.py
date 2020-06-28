@@ -6,8 +6,6 @@ import os
 
 from character_recognition import *
 
-
-
 class Recognizer:
 
     def __init__(self):

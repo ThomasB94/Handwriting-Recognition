@@ -54,9 +54,9 @@ def select_features(image_features, labels, features, svm_best, rf_best):
         #     svm_best = svm_score
     return rf_best
 
-image_features = np.load('numpy_arrays\\300_augmented_feature_vecs.npy')
+image_features = np.load('numpy_arrays\\feature_vecs.npy')
 print(len(image_features))
-labels = np.load('numpy_arrays\\300_augmented_labels.npy')
+labels = np.load('numpy_arrays\\labels.npy')
 print(len(labels))
 #best = select_features(image_features, labels, features, 0, 0)
 #print(best)
@@ -81,13 +81,13 @@ print(len(labels))
 # print(random_grid.cv_results_['params'][random_grid.best_index_])
 #print(random_grid.cv_results_)
 
-# RFClassifier = RandomForestClassifier(n_estimators=150, criterion='gini', min_samples_split=2, max_depth=75, max_leaf_nodes=None, max_samples=0.9, min_samples_leaf=1)
-# RFClassifier.fit(image_features, labels)
-# with open('character_recognizer.pickle', 'wb') as pfile:
-#     pickle.dump(RFClassifier, pfile, protocol=pickle.HIGHEST_PROTOCOL)
-with open('character_recognizer.pickle', 'rb') as pfile:
-    loaded_classifier = pickle.load(pfile)
-print(loaded_classifier.predict(image_features[0].reshape(1,-1)))
+RFClassifier = RandomForestClassifier(n_estimators=150, criterion='gini', min_samples_split=2, max_depth=75, max_leaf_nodes=None, max_samples=0.9, min_samples_leaf=1)
+RFClassifier.fit(image_features, labels)
+with open('character_recognizer_no_augmentation.pickle', 'wb') as pfile:
+    pickle.dump(RFClassifier, pfile, protocol=pickle.HIGHEST_PROTOCOL)
+# with open('character_recognizer.pickle', 'rb') as pfile:
+#     loaded_classifier = pickle.load(pfile)
+# print(loaded_classifier.predict(image_features[0].reshape(1,-1)))
 #### SVC ####
 # (0, 1, 3, 4, 5)
 # (0, 1, 3, 5, 7)
