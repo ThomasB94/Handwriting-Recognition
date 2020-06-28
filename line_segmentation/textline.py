@@ -2,7 +2,7 @@ import numpy as np
 # import matplotlib.pyplot as plt
 # plt.rcParams['figure.dpi']= 90
 import time
-import cv2
+from cv2 import cv2
 import os
 from statistics import mean, stdev
 from line_segmentation.persistence import RunPersistence
@@ -13,10 +13,11 @@ BLACK = 0
 
 def remove_whitespace(image):
   rows, cols = np.where(image == 0)
-  r1 = min(rows) - 2
-  r2 = max(rows) + 2
-  c1 = min(cols) - 2
-  c2 = max(cols) + 2
+  r1 = min(rows)
+  r2 = max(rows)
+  c1 = min(cols)
+  c2 = max(cols) 
+  
   return image[r1:r2,c1:c2]
 
 def crop_line(image, row):
@@ -32,13 +33,7 @@ def crop_line(image, row):
 def textlines(im):
   lines = []
   # Removing the surrounding whitespace to increase pathfinding speed
-
   im = remove_whitespace(im)
-
-  # cv2.imshow('img',im)
-  # cv2.waitKey(0) 
-  # cv2.destroyAllWindows() 
-
   width = im.shape[1]
   height = im.shape[0]
 
@@ -62,7 +57,7 @@ def textlines(im):
   THRESHOLD = mn
   print(THRESHOLD)
   extrema_persistence = [t[0] for t in extrema_persistence if t[1] > THRESHOLD]
-  # Odd indexes are minima, even maxima
+  # Odd indexes are minima, even maxima, we use only minima, so remove maxima
   minima = []
   for idx in range(len(extrema_persistence)):
     if idx % 2 == 0:  
@@ -70,8 +65,15 @@ def textlines(im):
       minima.append(r)
       # for c in range(width):
       #   working_im[r][c] = BLACK
-  minima.remove(0)
   minima.sort()
+  
+  # check to see if there is a line at the top or at the bottom, we don't use those, so we remove them
+  first_line = minima[0]
+  last_line = minima[-1]
+  if first_line < 20:
+    minima.remove(first_line)
+  if height - last_line < 20:
+    minima.remove(last_line)
 
   ##########################################################################
   # this is just for drawing the found lines 
@@ -114,7 +116,8 @@ def textlines(im):
 
   print("Cutting textlines out of image")
   num_paths = len(paths)
-  for idx in range(num_paths):
+  # if we have num_paths paths, we have num_paths+1 sentences
+  for idx in range(num_paths+1):
 
     cropped = im.copy()
     
@@ -130,8 +133,8 @@ def textlines(im):
       cropped = cropped[0:max_r][0:]
     
     # this is the last line, so above the last text line
-    elif idx == num_paths - 1:
-      path = paths[idx]
+    elif idx == num_paths:
+      path = paths[idx-1]
       min_r = min(path, key=lambda x: x[0])[0]
       for p in path:
         r = p[0]
@@ -156,5 +159,11 @@ def textlines(im):
         cropped[r:,c] = WHITE
       cropped = cropped[min_r:max_r][0:]
 
-    lines.append(cropped)
+    # after cutting out a sentence, we check to see if it is actually a sentence
+    # if it just a white rectangle we don't pass it to char seg
+    if not np.mean(cropped) > 250:
+      # this checks to see if a line is just whitespace or has some black dots
+      lines.append(cropped)      
+  
+  print("Created all rectangles with sentences, now exiting line segmentation")
   return lines

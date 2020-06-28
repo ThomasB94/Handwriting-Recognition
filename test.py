@@ -1,12 +1,12 @@
 from line_segmentation.textline import textlines
-from char_segmentation.charSeg import segmChars
+# from char_segmentation.charSeg import segmChars
 
 
 import os
 import cv2
 os.chdir("/Users/paulhofman/Documents/Studie/Handwriting Recognition/image-data")
 
-im = cv2.imread("P168-Fg016-R-C01-R01-binarized.jpg", cv2.IMREAD_GRAYSCALE)
+im = cv2.imread("25-Fg001.pbm", cv2.IMREAD_GRAYSCALE)
 lines = textlines(im)
 counter = 1
 for line in lines:
