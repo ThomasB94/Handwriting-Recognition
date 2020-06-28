@@ -82,6 +82,9 @@ def polarConversion(image, centreX, centreY):
 def CalcCenter(image):
   inverted = cv2.bitwise_not(image)
   moment = cv2.moments(inverted)
+  #Cannot find centre is zero. Approximate to centre of image
+  if moment["m00"] == 0:
+    return (image.shape[1] / 2, image.shape[0] / 2)
   cX = int(moment["m10"] / moment["m00"])
   cY = int(moment["m01"] / moment["m00"])
   return (cX, cY)
