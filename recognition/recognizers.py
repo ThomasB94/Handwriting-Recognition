@@ -8,10 +8,12 @@ from .character_recognition import *
 
 class Recognizer:
     def __init__(self):
+        #load recognizer models
         with open('recognition/character_recognizer_scaled.pickle', 'rb') as pfile:
            self.char_model = pickle.load(pfile)
         with open('recognition/style_classifier.pickle', 'rb') as pfile:
            self.style_model = pickle.load(pfile)
+        #stores how many times a style has been classified in the current file
         self.style_vect = [0, 0, 0]
         self.styles = ["Archaic", "Hasmonean", "Herodian"]
         self.feature_list = [
@@ -40,18 +42,22 @@ class Recognizer:
         return self.style_model.predict(image_features_vector)
 
     def _record_style(self, style):
-        #records the style in the class
+        #records the style in the class      #take points forward and backwards 5 points along the contours
+
         self.style_vect[self.styles.index(style)] = self.style_vect[self.styles.index(style)] + 1
 
     def get_style(self):
+        #get the most predicted style
         prediction = self.styles[np.argmax(self.style_vect)]
         self._page_reset()
         return prediction
 
     def _page_reset(self):
+        #resets the style vector
         self.style_vect = [0, 0, 0]
 
     def predict(self, image):
+        #predicts characters and updates internal state of object for style
         image_features = self._create_feature_vect(image).reshape(1, -1)
         char = self._predict_character(image_features)[0]
         style = self._predict_style(image_features)[0]
