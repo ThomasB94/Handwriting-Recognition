@@ -1,5 +1,5 @@
-from char_segmentation.extrPers import RunPersistence
-from char_segmentation.path import a_star
+from extrPers import RunPersistence
+from path import a_star
 from cv2 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
@@ -123,10 +123,14 @@ def refineSegm(segm, h):
         im1, im2 = makeCut(s,path)
         im1 = cutWhite(im1, h)
         im2 = cutWhite(im2, h)
-        new.append(im2)
-        new.append(im1)
-        newSegm += 1
-        
+        if im1.shape[1] > 0.25*s.shape[1] and im2.shape[1] > 0.25*s.shape[1]:
+          new.append(im2)
+          new.append(im1)
+          # cv2.imshow("im", s)
+          # cv2.waitKey(0)
+          newSegm += 1
+        else:
+          new.append(s)
       else:
         new.append(s)
     else:
@@ -160,15 +164,16 @@ def segmChars(line):
   newSegm = -1
   while newSegm != 0:
     segm, newSegm = refineSegm(segm, h)
+    print(newSegm)
   
   return segm
 
-# def main():
-#   line = cv2.imread("line3.jpg", 0)
-#   segm = segmChars(line)
+def main():
+  line = cv2.imread("line.jpg", 0)
+  segm = segmChars(line)
 
-#   for s in segm:
-#     cv2.imshow("im", s)
-#     cv2.waitKey(0)
+  for s in segm:
+    cv2.imshow("im", s)
+    cv2.waitKey(0)
 
-# main()
+main()
