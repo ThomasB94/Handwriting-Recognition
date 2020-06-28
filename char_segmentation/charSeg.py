@@ -101,20 +101,23 @@ def pers(im, width):
   removed_zeros = profile[~np.all(profile == 0)]
   THRESHOLD = abs(np.mean(removed_zeros))
 
-  # print(f'THRESHOLD: {THRESHOLD}')
-
   extrema_persistence = RunPersistence(profile)
   extrema_persistence = [t[0] for t in extrema_persistence if t[1] > THRESHOLD]
   extrema_persistence.sort(reverse = True)
-  # print(len(extrema_persistence))
 
-  # for idx in range(len(extrema_persistence)):
-  #   if idx % 2 == 0:  
-  #     x = extrema_persistence[idx]
-  #     for y in range(height):
-  #       im[y][x] = 125
-  # cv2.imshow("im",im)
-  # cv2.waitKey(0)
+  return extrema_persistence
+
+## Find extrema in bigram segment
+def bigramPers(im, width, height):
+
+  profile = np.zeros((width))
+
+  for w in range(width):
+    profile[w] = (im[:,w] == 0).sum()
+
+  extrema_persistence = RunPersistence(profile)
+  extrema_persistence = [t[0] for t in extrema_persistence if t[1] > 30]
+  extrema_persistence.sort(reverse = True)
 
   return extrema_persistence
 
@@ -129,18 +132,35 @@ def refineSegm(segm, h):
 
       path = makePath(s)
 
-      if(path != 0) :
+      if(path != 0):
         im1, im2 = makeCut(s,path)
         im1 = cutWhite(im1, h)
         im2 = cutWhite(im2, h)
         if im1.shape[1] > 0.25*s.shape[1] and im2.shape[1] > 0.25*s.shape[1]:
           new.append(im2)
           new.append(im1)
-          # cv2.imshow("im", s)
-          # cv2.waitKey(0)
           newSegm += 1
         else:
           new.append(s)
+
+      ## segm too wide but path not found -> bigram
+      elif(width > 85):
+        start = int((width/2)-20)
+        end = int((width/2)+20)
+        extr = bigramPers(s[:,start:end], end-start, h)
+
+        if extr == []:
+          new.append(s)
+        elif len(extr) == 1:
+          extr = extr[0]
+          new.append(s[:,extr+start:])
+          new.append(s[:,:extr+start])
+          newSegm +=1
+        elif len(extr) > 1:
+          extr = int(min(extr, key=lambda x:abs(x-width)))
+          new.append(s[:,extr+start:])
+          new.append(s[:,:extr+start])
+          newSegm+=1
       else:
         new.append(s)
     else:
