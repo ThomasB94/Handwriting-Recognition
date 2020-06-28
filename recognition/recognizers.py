@@ -11,7 +11,7 @@ class Recognizer:
         #load recognizer models
         with open('recognition/character_recognizer_scaled.pickle', 'rb') as pfile:
            self.char_model = pickle.load(pfile)
-        with open('recognition/style_classifier.pickle', 'rb') as pfile:
+        with open('recognition/style_classifier_scaled.pickle', 'rb') as pfile:
            self.style_model = pickle.load(pfile)
         #stores how many times a style has been classified in the current file
         self.style_vect = [0, 0, 0]
