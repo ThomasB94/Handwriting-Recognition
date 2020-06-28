@@ -1,5 +1,6 @@
 from line_segmentation.textline import textlines
 
+
 import os
 import cv2
 os.chdir("/Users/paulhofman/Documents/Studie/Handwriting Recognition/image-data")
